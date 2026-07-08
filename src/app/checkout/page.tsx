@@ -53,7 +53,7 @@ export default function CheckoutPage() {
     setTimeout(() => {
       setIsSubmitting(false);
       const newOrder = checkoutCart(paymentMethod, { company, ustId, email, firstName, lastName });
-      router.push(`/dashboard?success=true&orderId=${newOrder.id}`);
+      router.push(`/checkout/success?orderId=${newOrder.id}`);
     }, 1500);
   };
 
