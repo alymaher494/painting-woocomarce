@@ -1,26 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8f9fa;
+  --foreground: #191c1d;
+  --primary: #3d6a00;
+  --primary-light: #76bc21;
+  --on-primary: #ffffff;
+  --secondary: #b40065;
+  --secondary-light: #db1f7f;
+  --on-secondary: #ffffff;
+  --tertiary: #151b29;
+  --on-tertiary: #ffffff;
+  --surface: #ffffff;
+  --surface-dim: #d9dadb;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f3f4f5;
+  --surface-container: #edeeef;
+  --surface-container-high: #e7e8e9;
+  --surface-container-highest: #e1e3e4;
+  --on-surface: #191c1d;
+  --outline: #727a65;
+  --outline-variant: #c1cab2;
+  --error: #ba1a1a;
+  
+  --font-sans: 'Hanken Grotesk', sans-serif;
 }
 
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-secondary: var(--secondary);
+  --color-secondary-light: var(--secondary-light);
+  --color-tertiary: var(--tertiary);
+  --color-surface: var(--surface);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-on-surface: var(--on-surface);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-error: var(--error);
+  --font-sans: var(--font-sans);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+}
+
+/* Custom styles for corporate modern aesthetic */
+.outline-card {
+  background-color: var(--surface);
+  border: 1px solid var(--surface-container-high);
+  border-radius: 1rem; /* 16px */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.outline-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.primary-pill-btn {
+  border-radius: 9999px;
+  background-color: var(--primary);
+  color: var(--on-primary);
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.primary-pill-btn:hover {
+  background-color: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(61, 106, 0, 0.2);
+}
+
+.secondary-pill-btn {
+  border-radius: 9999px;
+  background-color: transparent;
+  border: 2px solid var(--secondary);
+  color: var(--secondary);
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+.secondary-pill-btn:hover {
+  background-color: var(--secondary);
+  color: var(--on-secondary);
+}
+
+/* Marquee ribbon animations */
+@keyframes marquee-left {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 25s linear infinite;
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-right 25s linear infinite;
+}
+
+/* Custom inputs matching rounded-md (0.5rem) */
+.precision-input {
+  background: var(--surface);
+  border: 1px solid var(--surface-container-highest);
+  color: var(--foreground);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.precision-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(61, 106, 0, 0.15);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface-container-highest);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }

@@ -1,0 +1,654 @@
+"use client";
+
+import React, { use, useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Check, Upload, HelpCircle, FileText, ShoppingCart, ShieldAlert } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+
+interface ProductInfo {
+  name: string;
+  category: string;
+  image: string;
+  thumbnails: string[];
+  baseCm2Price: number; // Price per square cm
+  materials: { name: string; desc: string; extraFactor: number }[];
+  baseSetupFee: number;
+}
+
+const PRODUCT_DATA: Record<string, ProductInfo> = {
+  "fine-art-poster": {
+    name: "Fine-Art Poster",
+    category: "Fine-Art & Fotodruck",
+    image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=600&auto=format&fit=crop&q=80",
+    thumbnails: [
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&auto=format&fit=crop&q=80"
+    ],
+    baseCm2Price: 0.0035,
+    baseSetupFee: 4.50,
+    materials: [
+      { name: "Premium Matte Vinyl", desc: "Non-reflective, elegant finish", extraFactor: 1.0 },
+      { name: "High-Gloss Finish", desc: "Vibrant colors, extra shine", extraFactor: 1.2 },
+      { name: "Hahnemühle Photo Rag 308g", desc: "Premium textured archival stock", extraFactor: 1.8 },
+    ],
+  },
+  "acrylglas": {
+    name: "Acrylglas Fine-Art",
+    category: "Plattendruck & Schilder",
+    image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&auto=format&fit=crop&q=80",
+    thumbnails: [
+      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80"
+    ],
+    baseCm2Price: 0.012,
+    baseSetupFee: 15.0,
+    materials: [
+      { name: "Acrylglas XT Hochglanz 4mm", desc: "Premium acrylic glass sheet", extraFactor: 1.0 },
+      { name: "Acrylglas XT Matte entspiegelt 4mm", desc: "Non-glare acrylic surface", extraFactor: 1.25 },
+    ],
+  },
+  "alu-dibond": {
+    name: "Alu-Dibond Butler Finish",
+    category: "Plattendruck & Schilder",
+    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop&q=80",
+    thumbnails: [
+      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&auto=format&fit=crop&q=80"
+    ],
+    baseCm2Price: 0.009,
+    baseSetupFee: 10.0,
+    materials: [
+      { name: "Alu-Dibond Weißmatt 3mm", desc: "Sturdy aluminum white core panel", extraFactor: 1.0 },
+      { name: "Butler Finish Silber gebürstet 3mm", desc: "Reflective brushed metal look", extraFactor: 1.4 },
+    ],
+  },
+  "werbeplane": {
+    name: "Werbeplane PVC",
+    category: "Werbetechnik",
+    image: "https://images.unsplash.com/photo-1561070791-26c113006238?w=600&auto=format&fit=crop&q=80",
+    thumbnails: [
+      "https://images.unsplash.com/photo-1561070791-26c113006238?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80"
+    ],
+    baseCm2Price: 0.0025,
+    baseSetupFee: 8.0,
+    materials: [
+      { name: "PVC Premium Frontlit Plane 500g", desc: "Waterproof banner with metal eyelets", extraFactor: 1.0 },
+      { name: "Mesh Netzgitterplane 300g (winddurchlässig)", desc: "Perfect for windy building scaffolds", extraFactor: 1.1 },
+    ],
+  },
+  "hartschaumplatte": {
+    name: "Hartschaumplatte PVC",
+    category: "Plattendruck & Schilder",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80",
+    thumbnails: [
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80"
+    ],
+    baseCm2Price: 0.006,
+    baseSetupFee: 7.5,
+    materials: [
+      { name: "Forex Hartschaumplatte Weiß 3mm", desc: "Lightweight and flexible signage", extraFactor: 1.0 },
+      { name: "Forex Hartschaumplatte Weiß 5mm", desc: "Sturdy interior exhibition panel", extraFactor: 1.3 },
+    ],
+  },
+};
+
+interface Params {
+  slug: string;
+}
+
+export default function ProductDetailPage({ params }: { params: Promise<Params> }) {
+  const resolvedParams = use(params);
+  const { slug } = resolvedParams;
+  const router = useRouter();
+  const { addToCart } = useCart();
+
+  const product = PRODUCT_DATA[slug] || PRODUCT_DATA["fine-art-poster"];
+
+  // Configurator States
+  const [width, setWidth] = useState<number>(8);
+  const [height, setHeight] = useState<number>(8);
+  const [quantity, setQuantity] = useState<number>(100);
+  const [selectedMaterial, setSelectedMaterial] = useState<string>(product.materials[0].name);
+  const [qualityCheck, setQualityCheck] = useState<boolean>(true);
+  const [postInvoice, setPostInvoice] = useState<boolean>(false);
+  const [delivery, setDelivery] = useState<"standard" | "priority" | "48h" | "24h">("standard");
+
+  // File Upload States
+  const [file, setFile] = useState<{ name: string; size: string; url: string } | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [fileError, setFileError] = useState<string | null>(null);
+
+  // Active picture preview state
+  const [activeImage, setActiveImage] = useState<string>(product.image);
+
+  // Price Calculations
+  const [pricing, setPricing] = useState({ net: 0, vat: 0, gross: 0 });
+
+  useEffect(() => {
+    const area = width * height;
+    const materialFactor = product.materials.find((m) => m.name === selectedMaterial)?.extraFactor || 1.0;
+    
+    // Core calculation formula
+    const rawPrintCost = area * product.baseCm2Price * materialFactor;
+    let baseSetup = product.baseSetupFee;
+
+    // Delivery fee tiers
+    let deliveryFee = 0;
+    if (delivery === "priority") deliveryFee = 15.0;
+    else if (delivery === "48h") deliveryFee = 25.0;
+    else if (delivery === "24h") deliveryFee = 45.0;
+
+    // Additional services
+    const checkFee = qualityCheck ? 2.50 : 0;
+    const invoiceFee = postInvoice ? 1.50 : 0;
+
+    // Bulk discount tiers based on quantity
+    let bulkDiscountFactor = 1.0;
+    if (quantity >= 500) bulkDiscountFactor = 0.45;
+    else if (quantity >= 250) bulkDiscountFactor = 0.62;
+    else if (quantity >= 100) bulkDiscountFactor = 0.85;
+    else if (quantity >= 50) bulkDiscountFactor = 0.95;
+
+    const netSingle = (rawPrintCost * bulkDiscountFactor) + baseSetup + checkFee + invoiceFee + deliveryFee;
+    const netTotal = netSingle * quantity;
+    const vatTotal = netTotal * 0.19; // 19% MwSt
+    const grossTotal = netTotal + vatTotal;
+
+    setPricing({
+      net: parseFloat(netTotal.toFixed(2)),
+      vat: parseFloat(vatTotal.toFixed(2)),
+      gross: parseFloat(grossTotal.toFixed(2)),
+    });
+  }, [width, height, quantity, selectedMaterial, qualityCheck, postInvoice, delivery, product]);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = e.target.files?.[0];
+    if (!uploadedFile) return;
+
+    setFileError(null);
+    const validExtensions = ["pdf", "jpg", "png", "jpeg"];
+    const ext = uploadedFile.name.split(".").pop()?.toLowerCase();
+
+    if (!ext || !validExtensions.includes(ext)) {
+      setFileError("Ungültiges Dateiformat. Bitte laden Sie eine PDF, PNG oder JPG Datei hoch.");
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsUploading(false);
+          setFile({
+            name: uploadedFile.name,
+            size: (uploadedFile.size / (1024 * 1024)).toFixed(1) + " MB",
+            url: `https://shop.headless-commerce.de/uploads/secure/${encodeURIComponent(uploadedFile.name)}`,
+          });
+          return 100;
+        }
+        return prev + 20;
+      });
+    }, 150);
+  };
+
+  const handleAddToCart = () => {
+    if (!file) {
+      setFileError("Bitte laden Sie vor dem Hinzufügen zum Warenkorb eine Druckdatei hoch.");
+      document.getElementById("uploader-section")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
+    const cartPayload = {
+      productSlug: slug,
+      productName: product.name,
+      productImage: product.image,
+      config: {
+        width,
+        height,
+        quantity,
+        material: selectedMaterial,
+        qualityCheck,
+        postInvoice,
+        delivery,
+        fileName: file.name,
+        fileSize: file.size,
+        fileUrl: file.url,
+      },
+      pricing,
+    };
+
+    addToCart(cartPayload);
+    router.push("/cart");
+  };
+
+  // Helper sizes based on the design mockup specs
+  const PRESET_SIZES = [
+    { label: "5 x 5 cm", desc: "Small", w: 5, h: 5 },
+    { label: "8 x 8 cm", desc: "Standard", w: 8, h: 8 },
+    { label: "10 x 10 cm", desc: "Large", w: 10, h: 10 },
+  ];
+
+  // Estimated pricing table for mockup visualization
+  const getTierPrice = (tierQty: number) => {
+    const area = width * height;
+    const materialFactor = product.materials.find((m) => m.name === selectedMaterial)?.extraFactor || 1.0;
+    const rawPrintCost = area * product.baseCm2Price * materialFactor;
+    
+    let discount = 1.0;
+    if (tierQty >= 500) discount = 0.45;
+    else if (tierQty >= 250) discount = 0.62;
+    else if (tierQty >= 100) discount = 0.85;
+    else if (tierQty >= 50) discount = 0.95;
+
+    const baseSetup = product.baseSetupFee;
+    const netSingle = (rawPrintCost * discount) + baseSetup;
+    const grossSingle = netSingle * 1.19;
+
+    return {
+      unit: grossSingle.toFixed(2),
+      total: (grossSingle * tierQty).toFixed(2),
+    };
+  };
+
+  return (
+    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-8 text-[#191c1d]">
+      
+      {/* Navigation Breadcrumbs */}
+      <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold">
+        <Link href="/" className="hover:text-primary">Home</Link>
+        <span>/</span>
+        <Link href="/products" className="hover:text-primary">Produkte</Link>
+        <span>/</span>
+        <span className="text-foreground">{product.name}</span>
+      </div>
+
+      {/* Main Two-Column Configuration Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[25%_75%] gap-8 items-start">
+        
+        {/* Left Column: Gallery Sidebar */}
+        <div className="lg:sticky lg:top-[120px] h-max flex flex-col gap-6">
+          <div className="border border-[#e7e8e9] rounded-2xl p-2 bg-white shadow-sm">
+            <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#f3f4f5]">
+              <img
+                src={activeImage}
+                alt={product.name}
+                className="w-full h-full object-cover transition-all"
+              />
+              <span className="absolute top-4 left-4 bg-primary text-white text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-md">
+                Made in Germany
+              </span>
+            </div>
+            {/* Gallery Thumbnails */}
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {product.thumbnails.map((thumb, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveImage(thumb)}
+                  className={`aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                    activeImage === thumb ? "border-primary" : "border-transparent"
+                  }`}
+                >
+                  <img src={thumb} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white border border-[#e7e8e9] p-6 rounded-2xl flex flex-col gap-4 shadow-sm">
+            <h4 className="text-foreground font-black text-xs uppercase tracking-wider text-secondary">Druck-Checkliste</h4>
+            <ul className="text-xs text-slate-500 flex flex-col gap-2.5 font-medium">
+              <li className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-primary-light" /> 300 DPI optimale Auflösung
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-primary-light" /> CMYK Farbraum (Coated FOGRA39)
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-primary-light" /> 2mm umlaufender Beschnitt (Bleed)
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-primary-light" /> Schriften in Pfade konvertiert
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Right Column: Main Configurator Panel */}
+        <div className="bg-white border border-[#e7e8e9] p-8 md:p-12 rounded-3xl flex flex-col gap-8 shadow-sm">
+          {/* Header Info */}
+          <div className="pb-6 border-b border-[#e7e8e9]">
+            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">{product.category}</span>
+            <h1 className="text-3xl md:text-4xl font-black text-foreground mt-1">{product.name}</h1>
+            <p className="text-xs text-slate-500 mt-2 max-w-2xl leading-relaxed">
+              Precision-cut, weather-resistant vinyl prints for brands that demand the best quality. Perfect for professional presentation.
+            </p>
+          </div>
+
+          {/* 1. Choose Size Preset / Custom */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-foreground font-bold text-sm">1. Maße wählen</h3>
+            <div className="grid grid-cols-3 gap-4">
+              {PRESET_SIZES.map((preset, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => {
+                    setWidth(preset.w);
+                    setHeight(preset.h);
+                  }}
+                  className={`p-4 rounded-xl text-center border transition-all cursor-pointer ${
+                    width === preset.w && height === preset.h
+                      ? "bg-primary/5 border-primary shadow-sm"
+                      : "border-[#e7e8e9] hover:border-primary"
+                  }`}
+                >
+                  <span className="text-xs font-extrabold text-foreground block">{preset.label}</span>
+                  <span className="text-[10px] text-slate-400 block mt-1 font-semibold">{preset.desc}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Custom dimensions drawer */}
+            <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-[#f8f9fa] rounded-xl border border-[#e7e8e9]">
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Breite (cm)</label>
+                <input
+                  type="number"
+                  min={2}
+                  max={300}
+                  value={width}
+                  onChange={(e) => setWidth(Math.max(2, parseInt(e.target.value) || 2))}
+                  className="precision-input"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Höhe (cm)</label>
+                <input
+                  type="number"
+                  min={2}
+                  max={300}
+                  value={height}
+                  onChange={(e) => setHeight(Math.max(2, parseInt(e.target.value) || 2))}
+                  className="precision-input"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Select Material */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-foreground font-bold text-sm">2. Material & Ausführung</h3>
+            <div className="flex flex-col gap-3">
+              {product.materials.map((m) => (
+                <label
+                  key={m.name}
+                  onClick={() => setSelectedMaterial(m.name)}
+                  className={`p-4 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                    selectedMaterial === m.name
+                      ? "bg-primary/5 border-primary"
+                      : "border-[#e7e8e9] hover:border-primary bg-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="material"
+                      checked={selectedMaterial === m.name}
+                      onChange={() => setSelectedMaterial(m.name)}
+                      className="accent-primary"
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-foreground">{m.name}</span>
+                      <span className="text-[10px] text-slate-400 font-semibold">{m.desc}</span>
+                    </div>
+                  </div>
+                  {m.extraFactor > 1.0 && (
+                    <span className="text-[10px] bg-secondary/10 text-secondary font-bold px-2 py-0.5 rounded-full">
+                      +{Math.round((m.extraFactor - 1) * 100)}%
+                    </span>
+                  )}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* 3. Quantity & Pricing Table */}
+          <div className="flex flex-col gap-4">
+            <h3 className="text-foreground font-bold text-sm">3. Bestellmenge & Staffelpreise</h3>
+            <div className="border border-[#e7e8e9] rounded-xl overflow-hidden text-xs">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-[#f8f9fa] border-b border-[#e7e8e9] font-bold text-slate-500">
+                    <th className="p-3">Stückzahl</th>
+                    <th className="p-3">Stückpreis (Brutto)</th>
+                    <th className="p-3 text-right">Gesamtpreis</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#e7e8e9]">
+                  {[50, 100, 250, 500].map((tierQty) => {
+                    const prices = getTierPrice(tierQty);
+                    return (
+                      <tr
+                        key={tierQty}
+                        onClick={() => setQuantity(tierQty)}
+                        className={`hover:bg-primary/5 cursor-pointer transition-colors ${
+                          quantity === tierQty ? "bg-primary/5 font-bold" : ""
+                        }`}
+                      >
+                        <td className="p-3 flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="qty-tier"
+                            checked={quantity === tierQty}
+                            onChange={() => setQuantity(tierQty)}
+                            className="accent-primary"
+                          />
+                          <span>{tierQty} Stück</span>
+                        </td>
+                        <td className="p-3">{prices.unit} €</td>
+                        <td className="p-3 text-right text-primary">{prices.total} €</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Custom Quantity Input */}
+            <div className="flex items-center gap-3 mt-2">
+              <span className="text-xs text-slate-500 font-bold">Individuelle Menge:</span>
+              <input
+                type="number"
+                min={10}
+                value={quantity}
+                onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
+                className="precision-input w-24 text-center py-1.5"
+              />
+              <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. 10)</span>
+            </div>
+          </div>
+
+          <hr className="border-[#e7e8e9]" />
+
+          {/* Extra Services & Delivery */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex flex-col gap-4">
+              <h3 className="text-foreground font-bold text-sm">4. Zusatzleistungen</h3>
+              <div className="flex flex-col gap-3">
+                <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={qualityCheck}
+                    onChange={(e) => setQualityCheck(e.target.checked)}
+                    className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
+                  />
+                  <span className="text-xs font-semibold">Profi-Druckdatenprüfung (+2,50 €)</span>
+                </label>
+                <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={postInvoice}
+                    onChange={(e) => setPostInvoice(e.target.checked)}
+                    className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
+                  />
+                  <span className="text-xs font-semibold">Rechnung per Post erhalten (+1,50 €)</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <h3 className="text-foreground font-bold text-sm">5. Versandoptionen</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "standard", label: "Standard", desc: "4-5 Tage", price: "0,00 €" },
+                  { id: "priority", label: "Express", desc: "2-3 Tage", price: "+15,00 €" },
+                ].map((tier) => (
+                  <button
+                    key={tier.id}
+                    type="button"
+                    onClick={() => setDelivery(tier.id as any)}
+                    className={`p-3 rounded-xl border text-left flex flex-col justify-between min-h-[75px] cursor-pointer transition-all ${
+                      delivery === tier.id
+                        ? "bg-primary/5 border-primary"
+                        : "border-[#e7e8e9] hover:border-primary"
+                    }`}
+                  >
+                    <span className="text-[10px] font-bold text-foreground block">{tier.label}</span>
+                    <div>
+                      <span className="text-[9px] text-slate-400 block font-semibold">{tier.desc}</span>
+                      <span className="text-[10px] font-bold text-primary">{tier.price}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <hr className="border-[#e7e8e9]" />
+
+          {/* 6. File Upload */}
+          <div id="uploader-section" className="flex flex-col gap-4">
+            <h3 className="text-foreground font-bold text-sm">6. Druckdatei hochladen</h3>
+            
+            {!file ? (
+              <div className="border-2 border-dashed border-[#e7e8e9] rounded-2xl p-8 text-center bg-[#f8f9fa] hover:border-primary hover:bg-[#f3f4f5] transition-colors relative">
+                <input
+                  type="file"
+                  onChange={handleFileUpload}
+                  accept=".pdf,.png,.jpg,.jpeg"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  disabled={isUploading}
+                />
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-foreground block">Datei auswählen oder reinziehen</span>
+                    <span className="text-[10px] text-slate-400 mt-1 block">PDF, PNG, JPG (max. 100MB)</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-foreground block truncate max-w-[250px] md:max-w-[400px]">
+                      {file.name}
+                    </span>
+                    <span className="text-[10px] text-slate-400">{file.size} | Druckdaten bereit</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFile(null)}
+                  className="text-xs text-red-500 hover:text-red-600 hover:underline font-bold cursor-pointer"
+                >
+                  Entfernen
+                </button>
+              </div>
+            )}
+
+            {isUploading && (
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between text-[10px] text-slate-500 font-bold">
+                  <span>Druckdaten-Check läuft...</span>
+                  <span>{uploadProgress}%</span>
+                </div>
+                <div className="w-full bg-[#f3f4f5] h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-primary h-full transition-all duration-150"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {fileError && <p className="text-xs text-red-500 font-semibold">{fileError}</p>}
+          </div>
+
+          {/* Pricing Engine Summary Box */}
+          <div className="p-6 rounded-2xl bg-[#f8f9fa] border border-[#e7e8e9] flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="flex flex-col">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Estimated Subtotal:</span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-3xl font-black text-foreground">{pricing.gross.toFixed(2)} €</span>
+                <span className="text-xs text-slate-400 font-semibold">Brutto (inkl. 19% MwSt.)</span>
+              </div>
+              <span className="text-xs text-slate-500 font-semibold mt-1">
+                Netto: {pricing.net.toFixed(2)} € | MwSt.: {pricing.vat.toFixed(2)} €
+              </span>
+            </div>
+
+            <button
+              onClick={handleAddToCart}
+              type="button"
+              className="w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#b40065] hover:bg-[#db1f7f] text-white font-extrabold text-sm hover:shadow-lg transition-all transform active:scale-95 cursor-pointer"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              In den Warenkorb
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Service Badges */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+        <div className="bg-white border border-[#e7e8e9] p-6 rounded-2xl flex flex-col gap-2 shadow-sm text-center md:text-left">
+          <span className="text-primary text-xs font-bold uppercase tracking-wider block">Free File Check</span>
+          <p className="text-[11px] text-slate-500 leading-relaxed font-semibold">
+            Our experts manually review every design to ensure perfect print results before production.
+          </p>
+        </div>
+        <div className="bg-white border border-[#e7e8e9] p-6 rounded-2xl flex flex-col gap-2 shadow-sm text-center md:text-left">
+          <span className="text-primary text-xs font-bold uppercase tracking-wider block">Eco-Friendly</span>
+          <p className="text-[11px] text-slate-500 leading-relaxed font-semibold">
+            Using solvent-free inks and sustainably sourced vinyl materials for all products.
+          </p>
+        </div>
+        <div className="bg-white border border-[#e7e8e9] p-6 rounded-2xl flex flex-col gap-2 shadow-sm text-center md:text-left">
+          <span className="text-primary text-xs font-bold uppercase tracking-wider block">CNC Precision</span>
+          <p className="text-[11px] text-slate-500 leading-relaxed font-semibold">
+            State-of-the-art laser cutting for intricate shapes and sharp edges.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  );
+}
