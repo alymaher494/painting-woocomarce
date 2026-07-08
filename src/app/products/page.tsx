@@ -5,6 +5,8 @@ import Link from "next/link";
 import { ArrowRight, Search, CheckCircle } from "lucide-react";
 import gsap from "gsap";
 
+import { getWooProducts } from "@/lib/api";
+
 interface Product {
   id: string;
   slug: string;
@@ -17,7 +19,7 @@ interface Product {
   features: string[];
 }
 
-const PRODUCTS: Product[] = [
+const DEFAULT_PRODUCTS: Product[] = [
   {
     id: "p1",
     slug: "fine-art-poster",
@@ -76,9 +78,35 @@ const PRODUCTS: Product[] = [
 ];
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function fetchLiveProducts() {
+      const wooData = await getWooProducts();
+      if (wooData && wooData.length > 0) {
+        const mapped: Product[] = wooData.map((node: any) => {
+          const rawPrice = node.price || "29.90";
+          const cleanPrice = parseFloat(rawPrice.replace(/[^0-9.]/g, "") || "29.90");
+          return {
+            id: node.id || String(node.databaseId),
+            slug: node.slug,
+            name: node.name,
+            category: "platten", // Map standard category
+            categoryName: "Druckprodukt",
+            priceFrom: cleanPrice,
+            description: "Premium Druckprodukt, synchronisiert aus WooCommerce.",
+            image: node.image?.sourceUrl || "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&auto=format&fit=crop&q=80",
+            features: ["CMYK-Farbraum", "Proficheck inklusive", "Expressversand bereit"],
+          };
+        });
+        setProducts(mapped);
+      }
+    }
+    fetchLiveProducts();
+  }, []);
 
   useEffect(() => {
     if (gridRef.current) {
@@ -88,9 +116,9 @@ export default function ProductsPage() {
         { opacity: 1, scale: 1, y: 0, duration: 0.35, stagger: 0.05, overwrite: "auto" }
       );
     }
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, products]);
 
-  const filteredProducts = PRODUCTS.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     const matchesCategory = activeCategory === "all" || product.category === activeCategory;
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
