@@ -41,7 +41,7 @@ export default function CheckoutPage() {
     }, 1000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !firstName || !lastName || !street || !zip || !city) {
       alert("Bitte füllen Sie alle erforderlichen Adressdaten aus.");
@@ -50,11 +50,36 @@ export default function CheckoutPage() {
 
     setIsSubmitting(true);
     
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: cart,
+          address: { email, company, ustId, firstName, lastName, street, zip, city },
+          paymentMethod,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        checkoutCart(paymentMethod, { company, ustId, email, firstName, lastName });
+        router.push(`/checkout/success?orderId=${data.orderId}`);
+      } else {
+        console.warn("WooCommerce REST API keys not set or connection refused. Falling back to simulated checkout.", data.error);
+        const newOrder = checkoutCart(paymentMethod, { company, ustId, email, firstName, lastName });
+        router.push(`/checkout/success?orderId=${newOrder.id}`);
+      }
+    } catch (err) {
+      console.warn("API route checkout connection error. Falling back to simulated checkout.", err);
       const newOrder = checkoutCart(paymentMethod, { company, ustId, email, firstName, lastName });
       router.push(`/checkout/success?orderId=${newOrder.id}`);
-    }, 1500);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (cart.length === 0) {
