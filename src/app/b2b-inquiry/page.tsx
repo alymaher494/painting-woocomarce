@@ -45,7 +45,7 @@ export default function B2BInquiryPage() {
   };
 
   return (
-    <div className="max-w-[800px] mx-auto px-4 py-8 flex flex-col gap-8 text-[#191c1d]">
+    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-8 text-[#191c1d]">
       {/* Back Button */}
       <Link href="/" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-bold w-fit mb-2">
         <ArrowLeft className="w-4 h-4" /> Zurück zur Startseite

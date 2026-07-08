@@ -101,13 +101,7 @@ export default function Home() {
 
   // Custom CMYK floral printing icon matching the logo reference
   const LogoEmblem = () => (
-    <div className="w-16 h-16 relative flex items-center justify-center mx-auto mb-4">
-      <div className="absolute w-6 h-6 rounded-full bg-primary/20 -top-1 left-2 border border-primary/40" />
-      <div className="absolute w-6 h-6 rounded-full bg-secondary/20 top-4 -left-1 border border-secondary/40" />
-      <div className="absolute w-6 h-6 rounded-full bg-secondary/30 top-4 left-5 border border-secondary/50" />
-      <div className="absolute w-6 h-6 rounded-full bg-primary/30 top-9 left-2 border border-primary/50" />
-      <Logo className="w-7 h-7 z-10" />
-    </div>
+    <Logo className="w-16 h-16 mx-auto mb-4" />
   );
 
   return (

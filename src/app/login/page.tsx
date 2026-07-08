@@ -24,8 +24,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-[450px] mx-auto w-full px-4 py-12 flex flex-col gap-6 text-[#191c1d]">
-      <div className="text-center flex flex-col gap-2">
+    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-12 text-[#191c1d] flex flex-col items-center justify-center">
+      <div className="max-w-[450px] w-full flex flex-col gap-6">
+        <div className="text-center flex flex-col gap-2">
         <h1 className="text-2xl font-black text-foreground">Kundenlogin</h1>
         <p className="text-xs text-slate-500 font-semibold">Melden Sie sich an, um Ihre Druckdaten und Bestellungen zu verwalten.</p>
       </div>
@@ -82,6 +83,7 @@ export default function LoginPage() {
         <ShieldCheck className="w-4 h-4 text-primary" />
         <span>Gesicherte SSL-Verbindung</span>
       </div>
+    </div>
     </div>
   );
 }

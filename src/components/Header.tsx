@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ShoppingBag, ChevronDown, Menu, X } from "lucide-react";
+import { ShoppingBag, ChevronDown, Menu, X, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import Logo from "./Logo";
 
@@ -37,7 +37,9 @@ export const Header: React.FC = () => {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 text-foreground font-black text-xl tracking-tight hover:opacity-90">
           <Logo className="w-8 h-8" />
-         
+          <span>
+            DEUTSCH<span className="text-secondary">DRUCK</span>
+          </span>
         </Link>
 
         {/* Navigation */}
@@ -77,6 +79,10 @@ export const Header: React.FC = () => {
 
         {/* Right side items */}
         <div className="flex items-center gap-4">
+          <Link href="/login" className="p-2 text-slate-700 hover:text-primary transition-colors" title="Kundenkonto / Login">
+            <User className="w-5.5 h-5.5" />
+          </Link>
+
           <Link href="/cart" className="relative p-2 text-slate-700 hover:text-primary transition-colors">
             <ShoppingBag className="w-5.5 h-5.5" />
             {totalItems > 0 && (

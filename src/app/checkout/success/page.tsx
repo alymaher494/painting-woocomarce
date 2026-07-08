@@ -10,10 +10,11 @@ function SuccessContent() {
   const orderId = searchParams.get("orderId") || `DE-${Math.floor(1000 + Math.random() * 9000)}`;
 
   return (
-    <div className="max-w-[650px] mx-auto px-4 py-12 text-[#191c1d] text-center flex flex-col items-center gap-6">
-      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-        <CheckCircle2 className="w-8 h-8" />
-      </div>
+    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-12 text-[#191c1d] flex flex-col items-center justify-center">
+      <div className="max-w-[650px] w-full text-center flex flex-col items-center gap-6">
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto">
+          <CheckCircle2 className="w-8 h-8" />
+        </div>
 
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-black text-foreground">Vielen Dank für Ihre Bestellung!</h1>
@@ -69,6 +70,7 @@ function SuccessContent() {
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
+    </div>
     </div>
   );
 }
