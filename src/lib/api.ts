@@ -57,10 +57,7 @@ export async function getWooProducts() {
           image {
             sourceUrl
           }
-          ... on SimpleProduct {
-            price
-          }
-          ... on VariableProduct {
+          ... on ProductWithPricing {
             price
           }
         }
@@ -68,4 +65,20 @@ export async function getWooProducts() {
     }
   `);
   return data?.products?.nodes || null;
+}
+
+// 3. Fetch WooCommerce Categories list
+export async function getWooCategories() {
+  const data = await fetchAPI(`
+    query GetWooCategories {
+      productCategories(first: 10) {
+        nodes {
+          id
+          name
+          slug
+        }
+      }
+    }
+  `);
+  return data?.productCategories?.nodes || null;
 }

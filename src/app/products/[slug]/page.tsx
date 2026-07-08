@@ -275,7 +275,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
       </div>
 
       {/* Main Two-Column Configuration Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-[25%_75%] gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         
         {/* Left Column: Gallery Sidebar */}
         <div className="lg:sticky lg:top-[120px] h-max flex flex-col gap-6">

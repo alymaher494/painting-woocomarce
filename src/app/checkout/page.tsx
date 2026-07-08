@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, CreditCard, ShieldCheck, CheckCircle2, Lock, Landmark } from "lucide-react";
@@ -9,6 +9,10 @@ import { useCart } from "@/context/CartContext";
 export default function CheckoutPage() {
   const { cart, checkoutCart } = useCart();
   const router = useRouter();
+
+  // Authentication state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   // Form Fields
   const [email, setEmail] = useState("");
@@ -24,6 +28,24 @@ export default function CheckoutPage() {
   
   const [paymentMethod, setPaymentMethod] = useState("paypal");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const session = localStorage.getItem("cmyk_user_session");
+    if (session) {
+      setIsLoggedIn(true);
+      try {
+        const parsed = JSON.parse(session);
+        if (parsed.email) setEmail(parsed.email);
+        if (parsed.company) setCompany(parsed.company);
+        if (parsed.name) {
+          const parts = parsed.name.trim().split(" ");
+          setFirstName(parts[0] || "");
+          setLastName(parts.slice(1).join(" ") || "");
+        }
+      } catch (e) {}
+    }
+    setIsLoadingAuth(false);
+  }, []);
 
   const totalNet = cart.reduce((sum, item) => sum + item.pricing.net, 0);
   const totalVat = cart.reduce((sum, item) => sum + item.pricing.vat, 0);
@@ -81,6 +103,40 @@ export default function CheckoutPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoadingAuth) {
+    return <div className="text-center py-20 text-slate-500 font-semibold text-xs uppercase tracking-wider">Lade Sicherheitsprüfung...</div>;
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-20 text-center text-[#191c1d] flex flex-col items-center justify-center">
+        <div className="max-w-md w-full bg-white border border-[#e7e8e9] p-8 rounded-2xl shadow-sm flex flex-col gap-6">
+          <Lock className="w-12 h-12 text-secondary mx-auto" />
+          <div className="flex flex-col gap-2">
+            <h2 className="text-2xl font-black text-foreground">Kundenkonto erforderlich</h2>
+            <p className="text-xs text-slate-500 leading-relaxed font-semibold">
+              Um eine Bestellung aufzugeben, müssen Sie als B2B- oder B2C-Kunde angemeldet sein. Das sichert den automatischen Datencheck und ordnet Ihre Uploads zu.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/login?redirect=/checkout"
+              className="flex-1 py-3 rounded-full bg-[#f3f4f5] hover:bg-[#e7e8e9] border border-[#e7e8e9] text-slate-700 font-bold text-xs uppercase tracking-wider text-center"
+            >
+              Anmelden
+            </Link>
+            <Link
+              href="/register?redirect=/checkout"
+              className="flex-1 py-3 rounded-full bg-primary hover:bg-primary-light text-white font-bold text-xs uppercase tracking-wider shadow-sm text-center"
+            >
+              Konto erstellen
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (cart.length === 0) {
     return (

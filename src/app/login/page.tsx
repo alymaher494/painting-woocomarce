@@ -18,8 +18,19 @@ export default function LoginPage() {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      // Route to account dashboard
-      router.push("/dashboard");
+      // Store session details
+      localStorage.setItem(
+        "cmyk_user_session",
+        JSON.stringify({
+          email,
+          name: "Max Mustermann",
+          company: "Muster GmbH"
+        })
+      );
+      
+      const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+      const redirectUrl = searchParams?.get("redirect") || "/dashboard";
+      router.push(redirectUrl);
     }, 1200);
   };
 

@@ -5,11 +5,28 @@ import Link from "next/link";
 import { ShoppingBag, ChevronDown, Menu, X, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import Logo from "./Logo";
+import { getWooCategories } from "@/lib/api";
 
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { cart } = useCart();
+
+  const [categories, setCategories] = useState<{ name: string; slug: string }[]>([
+    { name: "Fine-Art & Fotodruck", slug: "fine-art" },
+    { name: "Plattendruck & Schilder", slug: "platten" },
+    { name: "Werbetechnik & Planen", slug: "werbetechnik" }
+  ]);
+
+  useEffect(() => {
+    async function loadCats() {
+      const wooCats = await getWooCategories();
+      if (wooCats && wooCats.length > 0) {
+        setCategories(wooCats);
+      }
+    }
+    loadCats();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,24 +69,15 @@ export const Header: React.FC = () => {
               Kategorien <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-200" />
             </button>
             <div className="absolute top-full left-0 mt-2 w-56 rounded-xl bg-white border border-[#e7e8e9] shadow-lg p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <Link
-                href="/categories/fine-art"
-                className="block w-full px-4 py-2.5 text-sm text-slate-700 hover:text-primary hover:bg-[#f3f4f5] rounded-lg transition-colors font-medium"
-              >
-                Fine-Art & Fotodruck
-              </Link>
-              <Link
-                href="/categories/platten"
-                className="block w-full px-4 py-2.5 text-sm text-slate-700 hover:text-primary hover:bg-[#f3f4f5] rounded-lg transition-colors font-medium"
-              >
-                Plattendruck & Schilder
-              </Link>
-              <Link
-                href="/categories/werbetechnik"
-                className="block w-full px-4 py-2.5 text-sm text-slate-700 hover:text-primary hover:bg-[#f3f4f5] rounded-lg transition-colors font-medium"
-              >
-                Werbetechnik & Planen
-              </Link>
+              {categories.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/categories/${cat.slug}`}
+                  className="block w-full px-4 py-2.5 text-sm text-slate-700 hover:text-primary hover:bg-[#f3f4f5] rounded-lg transition-colors font-medium"
+                >
+                  {cat.name}
+                </Link>
+              ))}
             </div>
           </div>
           <Link href="/dashboard" className="hover:text-primary transition-colors">
@@ -121,27 +129,16 @@ export const Header: React.FC = () => {
           </Link>
           <div className="flex flex-col gap-2">
             <span className="text-xs font-bold uppercase text-secondary tracking-wider">Kategorien</span>
-            <Link
-              href="/categories/fine-art"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="pl-4 text-slate-700 hover:text-primary font-medium transition-colors"
-            >
-              Fine-Art & Fotodruck
-            </Link>
-            <Link
-              href="/categories/platten"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="pl-4 text-slate-700 hover:text-primary font-medium transition-colors"
-            >
-              Plattendruck & Schilder
-            </Link>
-            <Link
-              href="/categories/werbetechnik"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="pl-4 text-slate-700 hover:text-primary font-medium transition-colors"
-            >
-              Werbetechnik & Planen
-            </Link>
+            {categories.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/categories/${cat.slug}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="pl-4 text-slate-700 hover:text-primary font-medium transition-colors"
+              >
+                {cat.name}
+              </Link>
+            ))}
           </div>
           <Link
             href="/dashboard"

@@ -60,7 +60,7 @@ function DashboardContent() {
             }`}
           >
             <LayoutDashboard className="w-4.5 h-4.5" />
-            <span>Konto-Übersicht</span>
+            <span>KONTO-ÜBERSICHT</span>
           </button>
 
           <button
@@ -72,7 +72,7 @@ function DashboardContent() {
             }`}
           >
             <ShoppingBag className="w-4.5 h-4.5" />
-            <span>Bestellungen ({orders.length})</span>
+            <span>BESTELLUNGEN ({orders.length})</span>
           </button>
 
           <button
@@ -84,7 +84,7 @@ function DashboardContent() {
             }`}
           >
             <MapPin className="w-4.5 h-4.5" />
-            <span>Adressbuch</span>
+            <span>ADRESSBUCH</span>
           </button>
         </div>
 

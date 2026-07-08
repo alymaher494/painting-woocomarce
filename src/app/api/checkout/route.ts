@@ -20,6 +20,8 @@ export async function POST(request: Request) {
       return {
         product_id: cleanDbId,
         quantity: item.config.quantity,
+        subtotal: String(item.pricing.net),
+        total: String(item.pricing.net),
         meta_data: [
           { key: "Material", value: item.config.material },
           { key: "Format", value: `${item.config.width}x${item.config.height} cm` },
@@ -33,7 +35,7 @@ export async function POST(request: Request) {
     const orderData = {
       payment_method: paymentMethod,
       payment_method_title: paymentMethod === "paypal" ? "PayPal Headless Connect" : "Klarna / Card Connect",
-      set_paid: true,
+      status: "processing",
       billing: {
         first_name: address.firstName,
         last_name: address.lastName,
