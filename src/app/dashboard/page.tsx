@@ -46,8 +46,8 @@ function DashboardContent() {
         </div>
       )}
 
-      {/* Main Split Layout: 25% Left Nav Drawer, 75% Active Dynamic Panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-[25%_75%] gap-8 items-start">
+      {/* Main Split Layout: Compact Nav + Full Width Content Panel */}
+      <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-8 items-start">
         
         {/* Left Column: Nav Drawer */}
         <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 border-b lg:border-b-0 lg:border-r border-[#e7e8e9] lg:pr-6">

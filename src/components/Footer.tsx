@@ -11,30 +11,39 @@ export const Footer: React.FC = () => {
         <div className="flex flex-col gap-4">
           <Link href="/" className="flex items-center gap-2 text-white font-extrabold text-xl tracking-tight">
             <Logo className="w-8 h-8" />
-            
           </Link>
           <p className="text-sm text-slate-400 leading-relaxed">
             Premium Headless E-Commerce Druckerei für anspruchsvolle B2B-Kunden in Deutschland. Maßgeschneiderte Platten, Fine-Art und Werbeplanen.
           </p>
         </div>
 
-        {/* Categories */}
+        {/* Navigation */}
         <div className="flex flex-col gap-4">
-          <h4 className="text-white font-bold text-xs uppercase tracking-widest">Kategorien</h4>
+          <h4 className="text-white font-bold text-xs uppercase tracking-widest">Navigation</h4>
           <ul className="flex flex-col gap-2.5 text-sm text-slate-400">
             <li>
-              <Link href="/categories/fine-art" className="hover:text-white transition-colors">
-                Fine-Art & Fotodruck
+              <Link href="/" className="hover:text-white transition-colors">
+                Startseite
               </Link>
             </li>
             <li>
-              <Link href="/categories/platten" className="hover:text-white transition-colors">
-                Plattendruck & Schilder
+              <Link href="/products" className="hover:text-white transition-colors">
+                Produkte
               </Link>
             </li>
             <li>
-              <Link href="/categories/werbetechnik" className="hover:text-white transition-colors">
-                Werbetechnik & Banner
+              <Link href="/dashboard" className="hover:text-white transition-colors">
+                Mein Kundenkonto
+              </Link>
+            </li>
+            <li>
+              <Link href="/kontakt" className="hover:text-white transition-colors">
+                Kontakt
+              </Link>
+            </li>
+            <li>
+              <Link href="/ueber-uns" className="hover:text-white transition-colors">
+                Über uns
               </Link>
             </li>
           </ul>
@@ -45,18 +54,24 @@ export const Footer: React.FC = () => {
           <h4 className="text-white font-bold text-xs uppercase tracking-widest">Rechtliches</h4>
           <ul className="flex flex-col gap-2.5 text-sm text-slate-400">
             <li>
-              <Link href="/dashboard" className="hover:text-white transition-colors">
-                Mein Kundenkonto
+              <Link href="/impressum" className="hover:text-white transition-colors">
+                Impressum
               </Link>
             </li>
             <li>
-              <span className="hover:text-white transition-colors cursor-pointer">Impressum</span>
+              <Link href="/datenschutz" className="hover:text-white transition-colors">
+                Datenschutzerklärung
+              </Link>
             </li>
             <li>
-              <span className="hover:text-white transition-colors cursor-pointer">Datenschutzerklärung</span>
+              <Link href="/agb" className="hover:text-white transition-colors">
+                AGB & Widerruf
+              </Link>
             </li>
             <li>
-              <span className="hover:text-white transition-colors cursor-pointer">AGB & Widerruf</span>
+              <Link href="/versand-zahlung" className="hover:text-white transition-colors">
+                Versand & Zahlung
+              </Link>
             </li>
           </ul>
         </div>
@@ -81,7 +96,7 @@ export const Footer: React.FC = () => {
         </div>
       </div>
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-        <span>© {new Date().getFullYear()} DEUTSCHDRUCK E.K. Alle Rechte vorbehalten.</span>
+        <span>© {new Date().getFullYear()} 4D4DICH. Alle Rechte vorbehalten.</span>
         <span>100% Klimaneutraler Druck aus Deutschland.</span>
       </div>
     </footer>

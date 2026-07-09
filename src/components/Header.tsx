@@ -22,7 +22,13 @@ export const Header: React.FC = () => {
     async function loadCats() {
       const wooCats = await getWooCategories();
       if (wooCats && wooCats.length > 0) {
-        setCategories(wooCats);
+        // Filter out "Uncategorized" default WooCommerce category
+        const filtered = wooCats.filter(
+          (cat: any) => cat.slug !== "uncategorized" && cat.name.toLowerCase() !== "uncategorized"
+        );
+        if (filtered.length > 0) {
+          setCategories(filtered);
+        }
       }
     }
     loadCats();
@@ -51,16 +57,16 @@ export const Header: React.FC = () => {
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 text-foreground font-black text-xl tracking-tight hover:opacity-90">
+        {/* Logo — image only, no text */}
+        <Link href="/" className="flex items-center hover:opacity-90">
           <Logo className="w-8 h-8" />
-          <span>
-            DEUTSCH<span className="text-secondary">DRUCK</span>
-          </span>
         </Link>
 
         {/* Navigation */}
         <nav className="hidden md:flex items-center gap-8 text-[15px] font-semibold text-slate-700">
+          <Link href="/" className="hover:text-primary transition-colors">
+            Startseite
+          </Link>
           <Link href="/products" className="hover:text-primary transition-colors">
             Produkte
           </Link>
@@ -80,6 +86,9 @@ export const Header: React.FC = () => {
               ))}
             </div>
           </div>
+          <Link href="/kontakt" className="hover:text-primary transition-colors">
+            Kontakt
+          </Link>
           <Link href="/dashboard" className="hover:text-primary transition-colors">
             Kundenkonto
           </Link>
@@ -101,7 +110,7 @@ export const Header: React.FC = () => {
           </Link>
 
           <Link
-            href="/products"
+            href="/b2b-inquiry"
             className="hidden sm:inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-primary text-white font-bold text-sm hover:bg-primary-light transition-all shadow-sm"
           >
             Individuelles Design
@@ -120,6 +129,13 @@ export const Header: React.FC = () => {
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
         <div className="md:hidden fixed inset-0 top-[65px] z-40 bg-white flex flex-col p-6 gap-6 border-t border-[#e7e8e9] animate-fade-in shadow-lg">
+          <Link
+            href="/"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-lg font-bold text-slate-700 hover:text-primary transition-colors"
+          >
+            Startseite
+          </Link>
           <Link
             href="/products"
             onClick={() => setIsMobileMenuOpen(false)}
@@ -141,6 +157,13 @@ export const Header: React.FC = () => {
             ))}
           </div>
           <Link
+            href="/kontakt"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-lg font-bold text-slate-700 hover:text-primary transition-colors"
+          >
+            Kontakt
+          </Link>
+          <Link
             href="/dashboard"
             onClick={() => setIsMobileMenuOpen(false)}
             className="text-lg font-bold text-slate-700 hover:text-primary transition-colors"
@@ -148,7 +171,7 @@ export const Header: React.FC = () => {
             Kundenkonto
           </Link>
           <Link
-            href="/products"
+            href="/b2b-inquiry"
             onClick={() => setIsMobileMenuOpen(false)}
             className="w-full text-center py-3.5 rounded-full bg-primary text-white font-bold"
           >
