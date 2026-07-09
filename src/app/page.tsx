@@ -5,12 +5,18 @@ import Link from "next/link";
 import { ArrowRight, HelpCircle, ChevronDown, Check, Star, ShieldCheck, Sparkles } from "lucide-react";
 import gsap from "gsap";
 import Logo from "@/components/Logo";
-import { getHomepageSettings } from "@/lib/api";
+import { getHomepageSettings, getWooCategories } from "@/lib/api";
 
 const DEFAULT_HERO_SLIDES = [
   "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1600&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1600&auto=format&fit=crop&q=80"
+];
+
+const DEFAULT_CATEGORIES = [
+  { title: "Fine-Art & Fotodruck", slug: "fine-art" },
+  { title: "Plattendruck & Schilder", slug: "platten" },
+  { title: "Werbetechnik & Banner", slug: "werbetechnik" }
 ];
 
 export default function Home() {
@@ -23,6 +29,7 @@ export default function Home() {
   const [heroTitle, setHeroTitle] = useState("Premium Druck & Design für Ihren Erfolg");
   const [heroDescription, setHeroDescription] = useState("Wir bringen Ihre Ideen gross raus. Von hochwertigen Aufklebern bis zum kompletten Corporate Design.");
   const [heroSlides, setHeroSlides] = useState(DEFAULT_HERO_SLIDES);
+  const [homeCategories, setHomeCategories] = useState<{ title: string; slug: string }[]>(DEFAULT_CATEGORIES);
 
   // State for Hero Background Slides
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -36,6 +43,11 @@ export default function Home() {
         if (settings.heroSlides && settings.heroSlides.length > 0) {
           setHeroSlides(settings.heroSlides.map((s: any) => s.mediaItemUrl));
         }
+      }
+
+      const wooCats = await getWooCategories();
+      if (wooCats && wooCats.length > 0) {
+        setHomeCategories(wooCats.map((c: any) => ({ title: c.name, slug: c.slug })));
       }
     }
     loadCMSData();
@@ -68,17 +80,6 @@ export default function Home() {
     }, pageRef);
     return () => ctx.revert();
   }, []);
-
-  const categories = [
-    { title: "Alles für deinen Auftritt", slug: "fine-art" },
-    { title: "Aufkleber", slug: "platten" },
-    { title: "Fertige Aufkleber", slug: "platten" },
-    { title: "Plotfolie / Folienbeschriftung", slug: "platten" },
-    { title: "Plotfolie", slug: "platten" },
-    { title: "Roll Ups & Kundenstopper", slug: "werbetechnik" },
-    { title: "Stickerei / Bestickung", slug: "werbetechnik" },
-    { title: "Visitenkarten", slug: "fine-art" },
-  ];
 
   const faqs = [
     {
@@ -215,7 +216,7 @@ export default function Home() {
       {/* 3. Product Categories Grid */}
       <section className="max-w-[1400px] mx-auto w-full px-4 md:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {categories.map((cat, i) => (
+          {homeCategories.map((cat, i) => (
             <Link
               key={i}
               href={`/categories/${cat.slug}`}
