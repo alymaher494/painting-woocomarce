@@ -8,9 +8,9 @@ import Logo from "@/components/Logo";
 import { getHomepageSettings, getWooCategories } from "@/lib/api";
 
 const DEFAULT_HERO_SLIDES = [
+  "/hero1.webp",
   "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1600&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1600&auto=format&fit=crop&q=80",
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1600&auto=format&fit=crop&q=80"
+  "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1600&auto=format&fit=crop&q=80"
 ];
 
 const DEFAULT_CATEGORIES = [
@@ -126,35 +126,8 @@ export default function Home() {
               />
             </div>
           ))}
-          {/* Overlay to dim background slightly for high-contrast text readability */}
-          <div className="absolute inset-0 bg-black/55 z-10" />
-        </div>
-
-        {/* Text and buttons sitting directly over sliding background */}
-        <div className="relative z-20 max-w-[850px] w-full mx-4 text-center hero-card text-white px-4">
-          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-            {heroTitle.split("für Ihren Erfolg")[0]} <br />
-            {heroTitle.includes("für Ihren Erfolg") && (
-              <span className="text-[#db1f7f] bg-white/10 px-4 py-1 rounded-lg inline-block mt-2">für Ihren Erfolg</span>
-            )}
-          </h1>
-          <p className="text-base md:text-xl text-slate-200 max-w-2xl mx-auto mb-10 leading-relaxed font-semibold">
-            {heroDescription}
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/products"
-              className="px-10 py-4 rounded-full bg-[#b40065] text-white font-extrabold text-sm hover:bg-[#db1f7f] hover:shadow-lg transition-all active:scale-95"
-            >
-              Aktion starten
-            </Link>
-            <Link
-              href="/products"
-              className="px-10 py-4 rounded-full border-2 border-white text-white hover:bg-white hover:text-black font-extrabold text-sm transition-all active:scale-95"
-            >
-              Mehr erfahren
-            </Link>
-          </div>
+          {/* Very light overlay just to blend with page theme */}
+          <div className="absolute inset-0 bg-black/10 z-10" />
         </div>
       </section>
 
