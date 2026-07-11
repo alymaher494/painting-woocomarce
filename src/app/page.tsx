@@ -109,7 +109,7 @@ export default function Home() {
     <div ref={pageRef} className="flex flex-col gap-20 bg-[#f8f9fa] text-[#191c1d]">
       
       {/* 1. Hero Section */}
-      <section className="relative h-[650px] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[400px] md:h-[450px] w-full flex items-center justify-center overflow-hidden">
         {/* Background Slideshow */}
         <div className="absolute inset-0 z-0">
           {heroSlides.map((slide, index) => (
@@ -188,7 +188,7 @@ export default function Home() {
 
       {/* 3. Product Categories Grid */}
       <section className="max-w-[1400px] mx-auto w-full px-4 md:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {homeCategories.map((cat, i) => (
             <Link
               key={i}
