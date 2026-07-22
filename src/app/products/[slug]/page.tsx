@@ -15,41 +15,101 @@ interface ProductInfo {
   materials: { name: string; desc: string; extraFactor: number }[];
   baseSetupFee: number;
   isPresetOnly?: boolean;
+  isFixedDesign?: boolean;
   presets?: { label: string; desc: string; w: number; h: number; price: number }[];
+  minWidth?: number;
+  minHeight?: number;
+  maxWidth?: number;
+  maxHeight?: number;
+  minNetPrice?: number;
+  hasGrommetsOption?: boolean;
+  isRestrictedQuantities?: boolean;
+  allowedQuantities?: number[];
 }
 
 const PRODUCT_DATA: Record<string, ProductInfo> = {
-  "fine-art-poster": {
-    name: "Fine-Art Poster",
-    category: "Fine-Art & Fotodruck",
+  "fertige-aufkleber": {
+    name: "Fertige Aufkleber (Pizza Design)",
+    category: "Fertige Aufkleber",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&auto=format&fit=crop&q=80",
+    thumbnails: [
+      "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=150&auto=format&fit=crop&q=80"
+    ],
+    baseCm2Price: 0,
+    baseSetupFee: 0,
+    isPresetOnly: true,
+    isFixedDesign: true, // No file upload required
+    presets: [
+      { label: "Ø 10 cm", desc: "Kleine Ausführung", w: 10, h: 10, price: 5.00 },
+      { label: "Ø 20 cm", desc: "Mittlere Ausführung", w: 20, h: 20, price: 10.00 },
+      { label: "Ø 30 cm", desc: "Große Ausführung", w: 30, h: 30, price: 18.00 }
+    ],
+    materials: [
+      { name: "Premium Haftpapier Weiß", desc: "Eco-friendly, vibrant prints", extraFactor: 1.0 },
+      { name: "Outdoor Vinyl Wetterfest", desc: "UV and rain protected coating", extraFactor: 1.25 }
+    ]
+  },
+  "aufkleber": {
+    name: "Outdoor Aufkleber (Freie Größe)",
+    category: "Aufkleber",
+    image: "https://images.unsplash.com/photo-1561070791-26c113006238?w=600&auto=format&fit=crop&q=80",
+    thumbnails: [
+      "https://images.unsplash.com/photo-1561070791-26c113006238?w=150&auto=format&fit=crop&q=80"
+    ],
+    baseCm2Price: 0.0032, // Matches 100x100cm (10,000cm2) * 0.0032 = 32.00 € Netto
+    baseSetupFee: 4.50,
+    minWidth: 10,
+    minHeight: 10,
+    maxWidth: 150,
+    maxHeight: 400,
+    minNetPrice: 15.00, // Forces min cost of 15€ Netto
+    materials: [
+      { name: "PVC Premium Vinyl Weißmatt", desc: "Very durable outdoor quality", extraFactor: 1.0 },
+      { name: "PVC Premium Vinyl Hochglanz", desc: "Glossy finish for extra colors", extraFactor: 1.15 }
+    ]
+  },
+  "poster": {
+    name: "Premium B2B Werbeposter",
+    category: "Poster",
     image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=600&auto=format&fit=crop&q=80",
     thumbnails: [
-      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=150&auto=format&fit=crop&q=80"
+    ],
+    baseCm2Price: 0.0025,
+    baseSetupFee: 8.00,
+    hasGrommetsOption: true, // Allows border grommets
+    materials: [
+      { name: "Affichenpapier 115g (Blueback)", desc: "Perfect for outdoor bill posting", extraFactor: 1.0 },
+      { name: "Premium Fotopapier 250g", desc: "Heavy stock with semigloss finish", extraFactor: 1.45 }
+    ]
+  },
+  "aufkleber-auflagen": {
+    name: "Sticker mit festen Auflagen",
+    category: "Aufkleber mit bestimmten Auflagen",
+    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80",
+    thumbnails: [
       "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&auto=format&fit=crop&q=80"
     ],
     baseCm2Price: 0.0035,
-    baseSetupFee: 4.50,
+    baseSetupFee: 3.50,
     isPresetOnly: true,
+    isRestrictedQuantities: true, // Only specific quantities allowed
+    allowedQuantities: [2, 6, 10, 12, 25, 50],
     presets: [
-      { label: "10 x 10 cm", desc: "Ø 10 cm - Mini", w: 10, h: 10, price: 9.90 },
-      { label: "20 x 20 cm", desc: "Ø 20 cm - Medium", w: 20, h: 20, price: 19.90 },
-      { label: "30 x 30 cm", desc: "Ø 30 cm - Premium", w: 30, h: 30, price: 34.90 },
+      { label: "Format A8 (5.2x7.4 cm)", desc: "Standard small card", w: 5.2, h: 7.4, price: 4.50 },
+      { label: "Format A7 (7.4x10.5 cm)", desc: "Medium flyer size", w: 7.4, h: 10.5, price: 8.90 }
     ],
     materials: [
-      { name: "Premium Matte Vinyl", desc: "Non-reflective, elegant finish", extraFactor: 1.0 },
-      { name: "High-Gloss Finish", desc: "Vibrant colors, extra shine", extraFactor: 1.2 },
-      { name: "Hahnemühle Photo Rag 308g", desc: "Premium textured archival stock", extraFactor: 1.8 },
-    ],
+      { name: "Haftfolie transparent", desc: "Transparent borderless look", extraFactor: 1.0 },
+      { name: "Haftfolie Weißmatt", desc: "Classic white background", extraFactor: 1.0 }
+    ]
   },
   "acrylglas": {
     name: "Acrylglas Fine-Art",
     category: "Plattendruck & Schilder",
     image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&auto=format&fit=crop&q=80",
     thumbnails: [
-      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=150&auto=format&fit=crop&q=80"
     ],
     baseCm2Price: 0.012,
     baseSetupFee: 15.0,
@@ -63,9 +123,7 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     category: "Plattendruck & Schilder",
     image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop&q=80",
     thumbnails: [
-      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80"
     ],
     baseCm2Price: 0.009,
     baseSetupFee: 10.0,
@@ -74,30 +132,12 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
       { name: "Butler Finish Silber gebürstet 3mm", desc: "Reflective brushed metal look", extraFactor: 1.4 },
     ],
   },
-  "werbeplane": {
-    name: "Werbeplane PVC",
-    category: "Werbetechnik",
-    image: "https://images.unsplash.com/photo-1561070791-26c113006238?w=600&auto=format&fit=crop&q=80",
-    thumbnails: [
-      "https://images.unsplash.com/photo-1561070791-26c113006238?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=150&auto=format&fit=crop&q=80"
-    ],
-    baseCm2Price: 0.0025,
-    baseSetupFee: 8.0,
-    materials: [
-      { name: "PVC Premium Frontlit Plane 500g", desc: "Waterproof banner with metal eyelets", extraFactor: 1.0 },
-      { name: "Mesh Netzgitterplane 300g (winddurchlässig)", desc: "Perfect for windy building scaffolds", extraFactor: 1.1 },
-    ],
-  },
   "hartschaumplatte": {
     name: "Hartschaumplatte PVC",
     category: "Plattendruck & Schilder",
     image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80",
     thumbnails: [
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=150&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=80"
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&auto=format&fit=crop&q=80"
     ],
     baseCm2Price: 0.006,
     baseSetupFee: 7.5,
@@ -118,7 +158,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   const router = useRouter();
   const { addToCart } = useCart();
 
-  const product = PRODUCT_DATA[slug] || PRODUCT_DATA["fine-art-poster"];
+  const product = PRODUCT_DATA[slug] || PRODUCT_DATA["fertige-aufkleber"];
 
   const presets = product.presets || [
     { label: "5 x 5 cm", desc: "Small", w: 5, h: 5, price: 2.90 },
@@ -134,6 +174,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   const [qualityCheck, setQualityCheck] = useState<boolean>(true);
   const [postInvoice, setPostInvoice] = useState<boolean>(false);
   const [delivery, setDelivery] = useState<"standard" | "priority" | "48h" | "24h">("standard");
+  const [hasGrommets, setHasGrommets] = useState<boolean>(false); // Type 3 option
 
   // File Upload States
   const [file, setFile] = useState<{ name: string; size: string; url: string } | null>(null);
@@ -146,6 +187,27 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
 
   // Price Calculations
   const [pricing, setPricing] = useState({ net: 0, vat: 0, gross: 0 });
+
+  // Update states on slug navigation
+  useEffect(() => {
+    if (product) {
+      const pPresets = product.presets || [
+        { label: "5 x 5 cm", desc: "Small", w: 5, h: 5, price: 2.90 },
+        { label: "8 x 8 cm", desc: "Standard", w: 8, h: 8, price: 5.90 },
+        { label: "10 x 10 cm", desc: "Large", w: 10, h: 10, price: 8.90 },
+      ];
+      setWidth(pPresets[0].w);
+      setHeight(pPresets[0].h);
+      setSelectedMaterial(product.materials[0].name);
+      setHasGrommets(false);
+      setFile(null);
+      if (product.isRestrictedQuantities && product.allowedQuantities) {
+        setQuantity(product.allowedQuantities[0]);
+      } else {
+        setQuantity(100);
+      }
+    }
+  }, [slug]);
 
   useEffect(() => {
     let rawPrintCost = 0;
@@ -170,6 +232,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
     // Additional services
     const checkFee = qualityCheck ? 2.50 : 0;
     const invoiceFee = postInvoice ? 1.50 : 0;
+    const grommetsFee = (product.hasGrommetsOption && hasGrommets) ? 5.00 : 0; // Type 3 surcharge
 
     // Bulk discount tiers based on quantity
     let bulkDiscountFactor = 1.0;
@@ -178,8 +241,14 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
     else if (quantity >= 100) bulkDiscountFactor = 0.85;
     else if (quantity >= 50) bulkDiscountFactor = 0.95;
 
-    const netSingle = (rawPrintCost * bulkDiscountFactor) + baseSetup + checkFee + invoiceFee + deliveryFee;
-    const netTotal = netSingle * quantity;
+    const netSingle = (rawPrintCost * bulkDiscountFactor) + baseSetup + checkFee + invoiceFee + deliveryFee + grommetsFee;
+    let netTotal = netSingle * quantity;
+
+    // Enforce Minimum Price for Custom sizes (Type 2: minNetPrice = 15.00)
+    if (product.minNetPrice && netTotal < product.minNetPrice) {
+      netTotal = product.minNetPrice;
+    }
+
     const vatTotal = netTotal * 0.19; // 19% MwSt
     const grossTotal = netTotal + vatTotal;
 
@@ -188,7 +257,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
       vat: parseFloat(vatTotal.toFixed(2)),
       gross: parseFloat(grossTotal.toFixed(2)),
     });
-  }, [width, height, quantity, selectedMaterial, qualityCheck, postInvoice, delivery, product]);
+  }, [width, height, quantity, selectedMaterial, qualityCheck, postInvoice, delivery, hasGrommets, product]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
@@ -224,7 +293,21 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   };
 
   const handleAddToCart = () => {
-    if (!file) {
+    // 1. Validation for Custom Sizing Limits (Type 2: min/max limits)
+    if (!product.isPresetOnly) {
+      const minW = product.minWidth || 2;
+      const maxW = product.maxWidth || 300;
+      const minH = product.minHeight || 2;
+      const maxH = product.maxHeight || 300;
+
+      if (width < minW || width > maxW || height < minH || height > maxH) {
+        alert(`Geben Sie gültige Maße ein:\nBreite: zwischen ${minW} und ${maxW} cm\nHöhe: zwischen ${minH} und ${maxH} cm`);
+        return;
+      }
+    }
+
+    // 2. Validation for Design Upload (Type 1 doesn't require upload)
+    if (!product.isFixedDesign && !file) {
       setFileError("Bitte laden Sie vor dem Hinzufügen zum Warenkorb eine Druckdatei hoch.");
       document.getElementById("uploader-section")?.scrollIntoView({ behavior: "smooth" });
       return;
@@ -242,9 +325,10 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
         qualityCheck,
         postInvoice,
         delivery,
-        fileName: file.name,
-        fileSize: file.size,
-        fileUrl: file.url,
+        hasGrommets: product.hasGrommetsOption ? hasGrommets : false,
+        fileName: file?.name || "Standard-Design",
+        fileSize: file?.size || "0 MB",
+        fileUrl: file?.url || "",
       },
       pricing,
     };
@@ -384,24 +468,34 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
             {!product.isPresetOnly && (
               <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-[#f8f9fa] rounded-xl border border-[#e7e8e9]">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Breite (cm)</label>
+                  <div className="flex justify-between items-baseline">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Breite (cm)</label>
+                    <span className="text-[9px] text-slate-400 font-semibold">
+                      ({product.minWidth || 2} - {product.maxWidth || 300} cm)
+                    </span>
+                  </div>
                   <input
                     type="number"
-                    min={2}
-                    max={300}
+                    min={product.minWidth || 2}
+                    max={product.maxWidth || 300}
                     value={width}
-                    onChange={(e) => setWidth(Math.max(2, parseInt(e.target.value) || 2))}
+                    onChange={(e) => setWidth(parseInt(e.target.value) || 0)}
                     className="precision-input"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Höhe (cm)</label>
+                  <div className="flex justify-between items-baseline">
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Höhe (cm)</label>
+                    <span className="text-[9px] text-slate-400 font-semibold">
+                      ({product.minHeight || 2} - {product.maxHeight || 300} cm)
+                    </span>
+                  </div>
                   <input
                     type="number"
-                    min={2}
-                    max={300}
+                    min={product.minHeight || 2}
+                    max={product.maxHeight || 300}
                     value={height}
-                    onChange={(e) => setHeight(Math.max(2, parseInt(e.target.value) || 2))}
+                    onChange={(e) => setHeight(parseInt(e.target.value) || 0)}
                     className="precision-input"
                   />
                 </div>
@@ -459,7 +553,10 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#e7e8e9]">
-                  {[50, 100, 250, 500].map((tierQty) => {
+                  {(product.isRestrictedQuantities && product.allowedQuantities
+                    ? product.allowedQuantities
+                    : [50, 100, 250, 500]
+                  ).map((tierQty) => {
                     const prices = getTierPrice(tierQty);
                     return (
                       <tr
@@ -488,18 +585,20 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
               </table>
             </div>
 
-            {/* Custom Quantity Input */}
-            <div className="flex items-center gap-3 mt-2">
-              <span className="text-xs text-slate-500 font-bold">Individuelle Menge:</span>
-              <input
-                type="number"
-                min={10}
-                value={quantity}
-                onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
-                className="precision-input w-24 text-center py-1.5"
-              />
-              <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. 10)</span>
-            </div>
+            {/* Custom Quantity Input (hidden for restricted quantities like Type 4) */}
+            {!product.isRestrictedQuantities && (
+              <div className="flex items-center gap-3 mt-2">
+                <span className="text-xs text-slate-500 font-bold">Individuelle Menge:</span>
+                <input
+                  type="number"
+                  min={10}
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
+                  className="precision-input w-24 text-center py-1.5"
+                />
+                <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. 10)</span>
+              </div>
+            )}
           </div>
 
           <hr className="border-[#e7e8e9]" />
@@ -527,6 +626,17 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
                   />
                   <span className="text-xs font-semibold">Rechnung per Post erhalten (+1,50 €)</span>
                 </label>
+                {product.hasGrommetsOption && (
+                  <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={hasGrommets}
+                      onChange={(e) => setHasGrommets(e.target.checked)}
+                      className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
+                    />
+                    <span className="text-xs font-semibold">Umlaufende Metallösen zur Befestigung (+5,00 €)</span>
+                  </label>
+                )}
               </div>
             </div>
 
@@ -558,71 +668,75 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
             </div>
           </div>
 
-          <hr className="border-[#e7e8e9]" />
+          {!product.isFixedDesign && (
+            <>
+              <hr className="border-[#e7e8e9]" />
 
-          {/* 6. File Upload */}
-          <div id="uploader-section" className="flex flex-col gap-4">
-            <h3 className="text-foreground font-bold text-sm">6. Druckdatei hochladen</h3>
-            
-            {!file ? (
-              <div className="border-2 border-dashed border-[#e7e8e9] rounded-2xl p-8 text-center bg-[#f8f9fa] hover:border-primary hover:bg-[#f3f4f5] transition-colors relative">
-                <input
-                  type="file"
-                  onChange={handleFileUpload}
-                  accept=".pdf,.png,.jpg,.jpeg"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  disabled={isUploading}
-                />
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    <Upload className="w-5 h-5" />
+              {/* 6. File Upload */}
+              <div id="uploader-section" className="flex flex-col gap-4">
+                <h3 className="text-foreground font-bold text-sm">6. Druckdatei hochladen</h3>
+                
+                {!file ? (
+                  <div className="border-2 border-dashed border-[#e7e8e9] rounded-2xl p-8 text-center bg-[#f8f9fa] hover:border-primary hover:bg-[#f3f4f5] transition-colors relative">
+                    <input
+                      type="file"
+                      onChange={handleFileUpload}
+                      accept=".pdf,.png,.jpg,.jpeg"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      disabled={isUploading}
+                    />
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <Upload className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-foreground block">Datei auswählen oder reinziehen</span>
+                        <span className="text-[10px] text-slate-400 mt-1 block">PDF, PNG, JPG (max. 100MB)</span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-xs font-bold text-foreground block">Datei auswählen oder reinziehen</span>
-                    <span className="text-[10px] text-slate-400 mt-1 block">PDF, PNG, JPG (max. 100MB)</span>
+                ) : (
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 border border-primary/20">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary">
+                        <FileText className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-foreground block truncate max-w-[250px] md:max-w-[400px]">
+                          {file.name}
+                        </span>
+                        <span className="text-[10px] text-slate-400">{file.size} | Druckdaten bereit</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setFile(null)}
+                      className="text-xs text-red-500 hover:text-red-600 hover:underline font-bold cursor-pointer"
+                    >
+                      Entfernen
+                    </button>
                   </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 border border-primary/20">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center text-primary">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-foreground block truncate max-w-[250px] md:max-w-[400px]">
-                      {file.name}
-                    </span>
-                    <span className="text-[10px] text-slate-400">{file.size} | Druckdaten bereit</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setFile(null)}
-                  className="text-xs text-red-500 hover:text-red-600 hover:underline font-bold cursor-pointer"
-                >
-                  Entfernen
-                </button>
-              </div>
-            )}
+                )}
 
-            {isUploading && (
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between text-[10px] text-slate-500 font-bold">
-                  <span>Druckdaten-Check läuft...</span>
-                  <span>{uploadProgress}%</span>
-                </div>
-                <div className="w-full bg-[#f3f4f5] h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-primary h-full transition-all duration-150"
-                    style={{ width: `${uploadProgress}%` }}
-                  />
-                </div>
-              </div>
-            )}
+                {isUploading && (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between text-[10px] text-slate-500 font-bold">
+                      <span>Druckdaten-Check läuft...</span>
+                      <span>{uploadProgress}%</span>
+                    </div>
+                    <div className="w-full bg-[#f3f4f5] h-2 rounded-full overflow-hidden">
+                      <div
+                        className="bg-primary h-full transition-all duration-150"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
 
-            {fileError && <p className="text-xs text-red-500 font-semibold">{fileError}</p>}
-          </div>
+                {fileError && <p className="text-xs text-red-500 font-semibold">{fileError}</p>}
+              </div>
+            </>
+          )}
 
           {/* Pricing Engine Summary Box */}
           <div className="p-6 rounded-2xl bg-[#f8f9fa] border border-[#e7e8e9] flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
