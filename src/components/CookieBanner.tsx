@@ -26,7 +26,7 @@ export const CookieBanner: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 right-6 md:left-auto md:max-w-md z-50 animate-fade-in">
+    <div className="fixed bottom-6 left-4 right-4 md:left-auto md:max-w-md z-50 animate-fade-in">
       <div className="bg-white border border-[#e7e8e9] p-6 rounded-2xl shadow-xl flex flex-col gap-4 text-[#191c1d]">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2">

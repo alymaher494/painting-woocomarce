@@ -4,8 +4,9 @@ import { ArrowLeft } from "lucide-react";
 
 export default function DatenschutzPage() {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-6 text-[#191c1d]">
-      <Link href="/" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-bold w-fit mb-4">
+    <div className="flex flex-col gap-6 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-bold w-fit mb-4">
         <ArrowLeft className="w-4 h-4" /> Zurück zur Startseite
       </Link>
 
@@ -49,6 +50,7 @@ export default function DatenschutzPage() {
           Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Herkunft, Empfänger und Zweck Ihrer gespeicherten personenbezogenen Daten. Sie haben außerdem ein Recht, die Berichtigung oder Löschung dieser Daten zu verlangen.
         </p>
       </section>
+    </div>
     </div>
   );
 }

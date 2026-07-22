@@ -4,9 +4,9 @@ import { ArrowLeft, Truck, CreditCard, ShieldCheck } from "lucide-react";
 
 export default function VersandZahlungPage() {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-10 text-[#191c1d]">
-      
-      {/* Back Button */}
+    <div className="flex flex-col gap-10 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-4">
+        {/* Back Button */}
       <Link href="/" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-bold w-fit mb-2">
         <ArrowLeft className="w-4 h-4" /> Zurück zur Startseite
       </Link>
@@ -14,7 +14,7 @@ export default function VersandZahlungPage() {
       {/* Header */}
       <div className="flex flex-col gap-3">
         <span className="text-secondary text-xs font-bold uppercase tracking-widest font-sans">Kunden-Informationen</span>
-        <h1 className="text-4xl font-black text-foreground tracking-tight">Versand & Zahlung</h1>
+        <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Versand & Zahlung</h1>
         <p className="text-sm text-slate-500 max-w-xl font-medium leading-relaxed">
           Hier finden Sie alle Details zu den verfügbaren Versandarten, Lieferzeiten und sicheren Zahlungsmöglichkeiten für Ihre Druckbestellung.
         </p>
@@ -99,6 +99,7 @@ export default function VersandZahlungPage() {
           </p>
         </div>
       </div>
+    </div>
     </div>
   );
 }

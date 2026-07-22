@@ -4,9 +4,9 @@ import { ArrowLeft, CheckCircle2, Shield, Heart, Award } from "lucide-react";
 
 export default function UeberUnsPage() {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-10 text-[#191c1d]">
-      
-      {/* Back Button */}
+    <div className="flex flex-col gap-10 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-4">
+        {/* Back Button */}
       <Link href="/" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-bold w-fit mb-2">
         <ArrowLeft className="w-4 h-4" /> Zurück zur Startseite
       </Link>
@@ -14,7 +14,7 @@ export default function UeberUnsPage() {
       {/* Header */}
       <div className="flex flex-col gap-3">
         <span className="text-secondary text-xs font-bold uppercase tracking-widest font-sans">Das Team hinter dem Druck</span>
-        <h1 className="text-4xl font-black text-foreground tracking-tight">Über uns</h1>
+        <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Über uns</h1>
         <p className="text-sm text-slate-500 max-w-xl font-medium leading-relaxed">
           Erfahren Sie mehr über unsere Werte, unsere modernen Produktionsstätten und unser Qualitätsversprechen.
         </p>
@@ -70,6 +70,7 @@ export default function UeberUnsPage() {
           Mit einem engagierten Team aus Druckingenieuren, Mediengestaltern und Web-Entwicklern betreuen wir heute über 10.000 Kunden im deutschsprachigen Raum.
         </p>
       </section>
+    </div>
     </div>
   );
 }

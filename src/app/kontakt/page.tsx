@@ -23,10 +23,11 @@ export default function KontaktPage() {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-12 text-[#191c1d]">
-      {/* Page Title */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Kontakt</h1>
+    <div className="flex flex-col gap-12 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-4">
+        {/* Page Title */}
+        <div className="flex flex-col gap-2">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">Kontakt</h1>
         <p className="text-sm text-slate-500 max-w-xl">
           Haben Sie Fragen zu unseren Druckprodukten oder benötigen ein individuelles Angebot? 
           Unser Team berät Sie gerne persönlich.
@@ -177,6 +178,7 @@ export default function KontaktPage() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -14,6 +14,8 @@ interface ProductInfo {
   baseCm2Price: number; // Price per square cm
   materials: { name: string; desc: string; extraFactor: number }[];
   baseSetupFee: number;
+  isPresetOnly?: boolean;
+  presets?: { label: string; desc: string; w: number; h: number; price: number }[];
 }
 
 const PRODUCT_DATA: Record<string, ProductInfo> = {
@@ -28,6 +30,12 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     ],
     baseCm2Price: 0.0035,
     baseSetupFee: 4.50,
+    isPresetOnly: true,
+    presets: [
+      { label: "10 x 10 cm", desc: "Ø 10 cm - Mini", w: 10, h: 10, price: 9.90 },
+      { label: "20 x 20 cm", desc: "Ø 20 cm - Medium", w: 20, h: 20, price: 19.90 },
+      { label: "30 x 30 cm", desc: "Ø 30 cm - Premium", w: 30, h: 30, price: 34.90 },
+    ],
     materials: [
       { name: "Premium Matte Vinyl", desc: "Non-reflective, elegant finish", extraFactor: 1.0 },
       { name: "High-Gloss Finish", desc: "Vibrant colors, extra shine", extraFactor: 1.2 },
@@ -112,9 +120,15 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
 
   const product = PRODUCT_DATA[slug] || PRODUCT_DATA["fine-art-poster"];
 
+  const presets = product.presets || [
+    { label: "5 x 5 cm", desc: "Small", w: 5, h: 5, price: 2.90 },
+    { label: "8 x 8 cm", desc: "Standard", w: 8, h: 8, price: 5.90 },
+    { label: "10 x 10 cm", desc: "Large", w: 10, h: 10, price: 8.90 },
+  ];
+
   // Configurator States
-  const [width, setWidth] = useState<number>(8);
-  const [height, setHeight] = useState<number>(8);
+  const [width, setWidth] = useState<number>(presets[0].w);
+  const [height, setHeight] = useState<number>(presets[0].h);
   const [quantity, setQuantity] = useState<number>(100);
   const [selectedMaterial, setSelectedMaterial] = useState<string>(product.materials[0].name);
   const [qualityCheck, setQualityCheck] = useState<boolean>(true);
@@ -134,11 +148,17 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   const [pricing, setPricing] = useState({ net: 0, vat: 0, gross: 0 });
 
   useEffect(() => {
-    const area = width * height;
+    let rawPrintCost = 0;
     const materialFactor = product.materials.find((m) => m.name === selectedMaterial)?.extraFactor || 1.0;
-    
-    // Core calculation formula
-    const rawPrintCost = area * product.baseCm2Price * materialFactor;
+
+    if (product.isPresetOnly && product.presets) {
+      const activePreset = product.presets.find((p) => p.w === width && p.h === height) || product.presets[0];
+      rawPrintCost = activePreset.price * materialFactor;
+    } else {
+      const area = width * height;
+      rawPrintCost = area * product.baseCm2Price * materialFactor;
+    }
+
     let baseSetup = product.baseSetupFee;
 
     // Delivery fee tiers
@@ -233,18 +253,18 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
     router.push("/cart");
   };
 
-  // Helper sizes based on the design mockup specs
-  const PRESET_SIZES = [
-    { label: "5 x 5 cm", desc: "Small", w: 5, h: 5 },
-    { label: "8 x 8 cm", desc: "Standard", w: 8, h: 8 },
-    { label: "10 x 10 cm", desc: "Large", w: 10, h: 10 },
-  ];
-
   // Estimated pricing table for mockup visualization
   const getTierPrice = (tierQty: number) => {
-    const area = width * height;
+    let rawPrintCost = 0;
     const materialFactor = product.materials.find((m) => m.name === selectedMaterial)?.extraFactor || 1.0;
-    const rawPrintCost = area * product.baseCm2Price * materialFactor;
+    
+    if (product.isPresetOnly && product.presets) {
+      const activePreset = product.presets.find((p) => p.w === width && p.h === height) || product.presets[0];
+      rawPrintCost = activePreset.price * materialFactor;
+    } else {
+      const area = width * height;
+      rawPrintCost = area * product.baseCm2Price * materialFactor;
+    }
     
     let discount = 1.0;
     if (tierQty >= 500) discount = 0.45;
@@ -263,9 +283,9 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-8 text-[#191c1d]">
-      
-      {/* Navigation Breadcrumbs */}
+    <div className="flex flex-col gap-8 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-6">
+        {/* Navigation Breadcrumbs */}
       <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold">
         <Link href="/" className="hover:text-primary">Home</Link>
         <span>/</span>
@@ -340,7 +360,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
           <div className="flex flex-col gap-4">
             <h3 className="text-foreground font-bold text-sm">1. Maße wählen</h3>
             <div className="grid grid-cols-3 gap-4">
-              {PRESET_SIZES.map((preset, i) => (
+              {presets.map((preset, i) => (
                 <button
                   key={i}
                   type="button"
@@ -360,31 +380,33 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
               ))}
             </div>
 
-            {/* Custom dimensions drawer */}
-            <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-[#f8f9fa] rounded-xl border border-[#e7e8e9]">
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Breite (cm)</label>
-                <input
-                  type="number"
-                  min={2}
-                  max={300}
-                  value={width}
-                  onChange={(e) => setWidth(Math.max(2, parseInt(e.target.value) || 2))}
-                  className="precision-input"
-                />
+            {/* Custom dimensions drawer (only show for standard custom print calculators) */}
+            {!product.isPresetOnly && (
+              <div className="grid grid-cols-2 gap-4 mt-2 p-4 bg-[#f8f9fa] rounded-xl border border-[#e7e8e9]">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Breite (cm)</label>
+                  <input
+                    type="number"
+                    min={2}
+                    max={300}
+                    value={width}
+                    onChange={(e) => setWidth(Math.max(2, parseInt(e.target.value) || 2))}
+                    className="precision-input"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Höhe (cm)</label>
+                  <input
+                    type="number"
+                    min={2}
+                    max={300}
+                    value={height}
+                    onChange={(e) => setHeight(Math.max(2, parseInt(e.target.value) || 2))}
+                    className="precision-input"
+                  />
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Custom Höhe (cm)</label>
-                <input
-                  type="number"
-                  min={2}
-                  max={300}
-                  value={height}
-                  onChange={(e) => setHeight(Math.max(2, parseInt(e.target.value) || 2))}
-                  className="precision-input"
-                />
-              </div>
-            </div>
+            )}
           </div>
 
           {/* 2. Select Material */}
@@ -525,10 +547,10 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
                         : "border-[#e7e8e9] hover:border-primary"
                     }`}
                   >
-                    <span className="text-[10px] font-bold text-foreground block">{tier.label}</span>
-                    <div>
-                      <span className="text-[9px] text-slate-400 block font-semibold">{tier.desc}</span>
-                      <span className="text-[10px] font-bold text-primary">{tier.price}</span>
+                     <span className="text-[10px] font-bold text-foreground block">{tier.label}</span>
+                     <div>
+                       <span className="text-[10px] text-slate-400 block font-semibold">{tier.desc}</span>
+                       <span className="text-[10px] font-bold text-primary">{tier.price}</span>
                     </div>
                   </button>
                 ))}
@@ -607,7 +629,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
             <div className="flex flex-col">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Estimated Subtotal:</span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-3xl font-black text-foreground">{pricing.gross.toFixed(2)} €</span>
+                <span className="text-2xl md:text-3xl font-black text-foreground">{pricing.gross.toFixed(2)} €</span>
                 <span className="text-xs text-slate-400 font-semibold">Brutto (inkl. 19% MwSt.)</span>
               </div>
               <span className="text-xs text-slate-500 font-semibold mt-1">
@@ -649,6 +671,7 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
         </div>
       </div>
 
+    </div>
     </div>
   );
 }

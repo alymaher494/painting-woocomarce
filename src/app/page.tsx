@@ -62,15 +62,7 @@ export default function Home() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Reveal animations
-      gsap.from(".hero-card", {
-        opacity: 0,
-        scale: 0.98,
-        y: 20,
-        duration: 0.8,
-        ease: "power2.out"
-      });
-      gsap.from(".fade-up", {
+      gsap.from(".process-step", {
         opacity: 0,
         y: 20,
         duration: 0.6,
@@ -109,7 +101,7 @@ export default function Home() {
     <div ref={pageRef} className="flex flex-col gap-20 bg-[#f8f9fa] text-[#191c1d]">
       
       {/* 1. Hero Section */}
-      <section className="relative h-[400px] md:h-[450px] w-full flex items-center justify-center overflow-hidden">
+      <section className="relative h-[300px] md:h-[350px] w-full flex items-center justify-center overflow-visible">
         {/* Background Slideshow */}
         <div className="absolute inset-0 z-0">
           {heroSlides.map((slide, index) => (
@@ -129,71 +121,57 @@ export default function Home() {
           {/* Very light overlay just to blend with page theme */}
           <div className="absolute inset-0 bg-black/10 z-10" />
         </div>
-      </section>
 
-      {/* 2. Process Section */}
-      <section className="max-w-[1400px] mx-auto w-full px-4 md:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-black text-foreground">
-            In 3 einfachen <span className="text-secondary">Schritten</span>
-          </h2>
-        </div>
+        {/* Process Section - absolutely positioned at bottom of hero */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 translate-y-1/2">
+          <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8">
+            <div className="grid grid-cols-3 lg:grid-cols-[2fr_40px_2fr_40px_2fr] items-center gap-3 lg:gap-0 bg-white border border-[#e7e8e9] rounded-2xl p-4 lg:p-8 shadow-sm">
+              {/* Step 1 */}
+              <div className="process-step text-center flex flex-col items-center gap-3">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-primary/20 bg-primary/5 flex items-center justify-center text-primary">
+                  <Logo className="w-5 h-5 md:w-6 md:h-6" />
+                </div>
+                <h3 className="text-base md:text-lg font-bold text-foreground">1. Produkt wählen</h3>
+              </div>
 
-        {/* Process layout with circles & arrows */}
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_40px_2fr_40px_2fr] items-center gap-8 lg:gap-0 bg-white border border-[#e7e8e9] rounded-2xl p-8 shadow-sm">
-          {/* Step 1 */}
-          <div className="text-center flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full border border-primary/20 bg-primary/5 flex items-center justify-center text-primary">
-              <Logo className="w-6 h-6" />
+              {/* Arrow 1 */}
+              <div className="hidden lg:flex items-center justify-center w-[40px]">
+                <ArrowRight className="w-5 h-5 text-primary-light" />
+              </div>
+
+              {/* Step 2 */}
+              <div className="process-step text-center flex flex-col items-center gap-3">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-secondary/20 bg-secondary/5 flex items-center justify-center text-secondary">
+                  <Sparkles className="w-5 h-5 md:w-6 md:h-6" />
+                </div>
+                <h3 className="text-base md:text-lg font-bold text-foreground">2. Daten & Upload</h3>
+              </div>
+
+              {/* Arrow 2 */}
+              <div className="hidden lg:flex items-center justify-center w-[40px]">
+                <ArrowRight className="w-5 h-5 text-primary-light" />
+              </div>
+
+              {/* Step 3 */}
+              <div className="process-step text-center flex flex-col items-center gap-3">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-primary/20 bg-primary/5 flex items-center justify-center text-primary">
+                  <ShieldCheck className="w-5 h-5 md:w-6 md:h-6" />
+                </div>
+                <h3 className="text-base md:text-lg font-bold text-foreground">3. Druck & Versand</h3>
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-foreground">1. Produkt wählen</h3>
-            <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
-              Wählen Sie aus unseren Standardgrößen oder konfigurieren Sie ein individuelles Wunschformat.
-            </p>
-          </div>
-
-          {/* Arrow 1 */}
-          <div className="hidden lg:flex items-center justify-center w-[40px]">
-            <ArrowRight className="w-5 h-5 text-primary-light" />
-          </div>
-
-          {/* Step 2 */}
-          <div className="text-center flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full border border-secondary/20 bg-secondary/5 flex items-center justify-center text-secondary">
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-foreground">2. Daten & Upload</h3>
-            <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
-              Laden Sie bequem Ihre Druckvorlage hoch. Unser System übernimmt einen automatisierten Datencheck.
-            </p>
-          </div>
-
-          {/* Arrow 2 */}
-          <div className="hidden lg:flex items-center justify-center w-[40px]">
-            <ArrowRight className="w-5 h-5 text-primary-light" />
-          </div>
-
-          {/* Step 3 */}
-          <div className="text-center flex flex-col items-center gap-4">
-            <div className="w-16 h-16 rounded-full border border-primary/20 bg-primary/5 flex items-center justify-center text-primary">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="text-lg font-bold text-foreground">3. Druck & Versand</h3>
-            <p className="text-xs text-slate-500 leading-relaxed max-w-xs">
-              Schnelle Produktion und sicherer Versand direkt zu Ihnen nach Hause oder in Ihre Firma.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* 3. Product Categories Grid */}
-      <section className="max-w-[1400px] mx-auto w-full px-4 md:px-8">
+      {/* 2. Categories Section (moved up after hero overlap) */}
+      <section className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-16 md:pt-20">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {homeCategories.map((cat, i) => (
             <Link
               key={i}
               href={`/categories/${cat.slug}`}
-              className="outline-card p-8 text-center flex flex-col justify-between min-h-[220px] group cursor-pointer hover:border-primary"
+              className="outline-card p-8 text-center flex flex-col justify-between aspect-square group cursor-pointer hover:border-primary"
             >
               <LogoEmblem />
               <h3 className="text-sm font-extrabold text-foreground group-hover:text-primary transition-colors">
@@ -251,26 +229,29 @@ export default function Home() {
       </section>
 
       {/* 6. Scrolling Ribbon Banners (Marquees) */}
-      <section className="relative overflow-hidden w-full flex flex-col gap-4 z-10 py-6">
-        {/* Green Banner (Scroll Left) */}
-        <div className="bg-primary text-white py-3.5 transform -rotate-1 shadow-md w-full overflow-hidden">
-          <div className="animate-marquee-left flex gap-12 text-sm font-extrabold uppercase tracking-widest whitespace-nowrap">
-            {[...Array(6)].map((_, i) => (
-              <span key={i} className="inline-flex items-center gap-2">
-                Germany ❀ Höchste Qualität ❀ Kostenloser Versand ❀ Made in Germany
-              </span>
-            ))}
+      <section className="py-24 overflow-hidden bg-white relative flex flex-col justify-center items-center min-h-[400px]">
+        <div className="absolute inset-0 bg-slate-50/50 -z-10"></div>
+        <div className="relative w-full py-10 flex flex-col items-center justify-center gap-0 overflow-hidden">
+          {/* Green Banner (Scroll Left) */}
+          <div className="w-[110%] -rotate-3 bg-primary py-4 md:py-6 shadow-lg relative z-10">
+            <div className="flex animate-marquee-left whitespace-nowrap items-center">
+              {[...Array(6)].map((_, i) => (
+                <span key={i} className="text-white font-black text-2xl md:text-4xl uppercase tracking-widest flex items-center">
+                  Germany ❀ Höchste Qualität ❀ Kostenloser Versand ❀ Made in Germany <Logo className="h-10 md:h-16 w-auto ml-10 md:ml-16 mr-14 md:mr-24 brightness-0 invert" />
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Magenta Banner (Scroll Right) */}
-        <div className="bg-secondary text-white py-3.5 transform rotate-1 shadow-md w-full overflow-hidden">
-          <div className="animate-marquee-right flex gap-12 text-sm font-extrabold uppercase tracking-widest whitespace-nowrap">
-            {[...Array(6)].map((_, i) => (
-              <span key={i} className="inline-flex items-center gap-2">
-                Schnelle Produktion ❀ Individuelles Design ❀ CMYK Druckqualität
-              </span>
-            ))}
+          {/* Magenta Banner (Scroll Right) */}
+          <div className="w-[110%] rotate-3 bg-secondary py-4 md:py-6 shadow-xl relative z-20 -mt-6 md:-mt-8 border-t-4 border-white/20">
+            <div className="flex animate-marquee-right whitespace-nowrap items-center">
+              {[...Array(6)].map((_, i) => (
+                <span key={i} className="text-white font-black text-2xl md:text-4xl uppercase tracking-widest flex items-center">
+                  Schnelle Produktion ❀ Individuelles Design ❀ CMYK Druckqualität <Logo className="h-10 md:h-16 w-auto ml-10 md:ml-16 mr-14 md:mr-24 brightness-0 invert" />
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>

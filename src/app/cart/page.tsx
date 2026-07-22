@@ -13,7 +13,8 @@ export default function CartPage() {
   const totalGross = cart.reduce((sum, item) => sum + item.pricing.gross, 0);
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-8 text-[#191c1d]">
+    <div className="flex flex-col gap-8 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-6">
       {/* Breadcrumb / Step Indicator */}
       <div className="flex items-center gap-2 text-xs text-slate-500 font-bold">
         <Link href="/products" className="hover:text-primary transition-colors">Shop</Link>
@@ -160,6 +161,7 @@ export default function CartPage() {
           </Link>
         </div>
       )}
+    </div>
     </div>
   );
 }

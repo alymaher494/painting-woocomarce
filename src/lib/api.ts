@@ -16,7 +16,6 @@ async function fetchAPI(query: string, { variables }: { variables?: any } = {}) 
 
     const json = await res.json();
     if (json.errors) {
-      console.warn("GraphQL Errors:", json.errors);
       return null;
     }
     return json.data;

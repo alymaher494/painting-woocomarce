@@ -40,7 +40,8 @@ const POSTS: BlogPost[] = [
 
 export default function BlogPage() {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-10 text-[#191c1d]">
+    <div className="flex flex-col gap-10 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-4">
       
       {/* Back Button */}
       <Link href="/" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-bold w-fit mb-2">
@@ -50,7 +51,7 @@ export default function BlogPage() {
       {/* Header */}
       <div className="flex flex-col gap-3">
         <span className="text-secondary text-xs font-bold uppercase tracking-widest font-sans">Print & Design Magazin</span>
-        <h1 className="text-4xl font-black text-foreground tracking-tight">Unser Blog</h1>
+        <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Unser Blog</h1>
         <p className="text-sm text-slate-500 max-w-xl font-medium leading-relaxed">
           Tipps, Trick und Anleitungen von unseren Druckexperten. Erfahren Sie alles über Farbräume, Datenprüfung und Papierveredelungen.
         </p>
@@ -101,6 +102,7 @@ export default function BlogPage() {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 }

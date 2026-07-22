@@ -127,10 +127,11 @@ export default function ProductsPage() {
   });
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-12 text-[#191c1d]">
-      {/* Title Header */}
+    <div className="flex flex-col gap-12 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-4">
+        {/* Title Header */}
       <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Produktkonfigurator</h1>
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">Produktkonfigurator</h1>
         <p className="text-sm text-slate-500 max-w-xl">
           Wählen Sie ein Basisprodukt aus, um Maße, Materialien und Weiterverarbeitungen im Live-Rechner zu konfigurieren.
         </p>
@@ -241,6 +242,7 @@ export default function ProductsPage() {
       <div className="text-[10px] text-slate-400 text-center mt-6">
         * Alle Preise verstehen sich netto zzgl. 19% MwSt. und Versandkosten.
       </div>
+    </div>
     </div>
   );
 }

@@ -68,13 +68,15 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   }, [isLoading, slug, products]);
 
   return (
-    <div ref={pageRef} className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-12 text-[#191c1d]">
+    <div ref={pageRef} className="flex flex-col gap-12 text-[#191c1d] bg-[#f8f9fa]">
       {/* Back Button */}
-      <Link href="/products" className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors text-sm w-fit font-bold">
-        <ArrowLeft className="w-4 h-4" /> Zurück zu allen Produkten
-      </Link>
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8">
+        <Link href="/products" className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors text-sm w-fit font-bold">
+          <ArrowLeft className="w-4 h-4" /> Zurück zu allen Produkten
+        </Link>
+      </div>
 
-      {/* Category Header Card */}
+      {/* Category Header Card - FULL WIDTH */}
       <div className="relative rounded-2xl overflow-hidden border border-[#e7e8e9] min-h-[300px] flex items-center p-8 md:p-16 bg-white shadow-sm">
         <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-transparent z-10" />
         <img
@@ -82,17 +84,17 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           alt={categoryName}
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="relative z-20 max-w-2xl flex flex-col gap-4 cat-fade">
+        <div className="relative z-20 max-w-[1400px] mx-auto w-full px-4 md:px-8 flex flex-col gap-4 cat-fade">
           <span className="text-secondary text-xs font-bold uppercase tracking-widest">Kategorie</span>
-          <h1 className="text-4xl md:text-5xl font-black text-foreground">{categoryName}</h1>
+          <h1 className="text-3xl md:text-5xl font-black text-foreground">{categoryName}</h1>
           <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-medium">
             {categoryDesc}
           </p>
         </div>
       </div>
 
-      {/* Products Grid */}
-      <div className="flex flex-col gap-8">
+      {/* Products Grid - constrained */}
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 flex flex-col gap-8">
         <h2 className="text-2xl font-bold text-foreground">Passende Druckprodukte</h2>
 
         {isLoading ? (

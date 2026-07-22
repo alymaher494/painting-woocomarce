@@ -110,8 +110,9 @@ export default function CheckoutPage() {
 
   if (!isLoggedIn) {
     return (
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-20 text-center text-[#191c1d] flex flex-col items-center justify-center">
-        <div className="max-w-md w-full bg-white border border-[#e7e8e9] p-8 rounded-2xl shadow-sm flex flex-col gap-6">
+      <div className="flex flex-col gap-8 text-[#191c1d] bg-[#f8f9fa]">
+        <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col items-center justify-center gap-4">
+          <div className="max-w-md w-full bg-white border border-[#e7e8e9] p-8 rounded-2xl shadow-sm flex flex-col gap-6">
           <Lock className="w-12 h-12 text-secondary mx-auto" />
           <div className="flex flex-col gap-2">
             <h2 className="text-2xl font-black text-foreground">Kundenkonto erforderlich</h2>
@@ -135,24 +136,28 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+      </div>
     );
   }
 
   if (cart.length === 0) {
     return (
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-20 text-center text-[#191c1d]">
-        <h2 className="text-2xl font-bold text-foreground">Ihr Warenkorb ist leer.</h2>
-        <p className="text-slate-500 mt-2">Sie können keine leere Bestellung abschicken.</p>
-        <Link href="/products" className="inline-block mt-6 px-6 py-3 rounded-full bg-primary text-white font-bold text-xs uppercase tracking-wider">
-          Produkte ansehen
-        </Link>
+      <div className="flex flex-col gap-8 text-[#191c1d] bg-[#f8f9fa]">
+        <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col items-center justify-center gap-4 text-center">
+          <h2 className="text-2xl font-bold text-foreground">Ihr Warenkorb ist leer.</h2>
+          <p className="text-slate-500 mt-2">Sie können keine leere Bestellung abschicken.</p>
+          <Link href="/products" className="inline-block mt-6 px-6 py-3 rounded-full bg-primary text-white font-bold text-xs uppercase tracking-wider">
+            Produkte ansehen
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-8 text-[#191c1d]">
-      {/* Breadcrumb / Step Indicator */}
+    <div className="flex flex-col gap-8 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-6">
+        {/* Breadcrumb / Step Indicator */}
       <div className="flex items-center gap-2 text-xs text-slate-500 font-bold">
         <Link href="/products" className="hover:text-primary transition-colors">Shop</Link>
         <ChevronRight className="w-3.5 h-3.5" />
@@ -372,6 +377,7 @@ export default function CheckoutPage() {
         </div>
 
       </form>
+    </div>
     </div>
   );
 }

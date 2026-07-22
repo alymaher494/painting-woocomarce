@@ -24,7 +24,8 @@ function DashboardContent() {
   }, [isSuccess]);
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-8 text-[#191c1d]">
+    <div className="flex flex-col gap-8 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-6">
       {/* Title */}
       <div className="flex flex-col gap-1">
         <h1 className="text-3xl font-extrabold text-foreground">Mein Kundenkonto</h1>
@@ -229,8 +230,8 @@ function DashboardContent() {
           )}
 
         </div>
-
       </div>
+    </div>
     </div>
   );
 }

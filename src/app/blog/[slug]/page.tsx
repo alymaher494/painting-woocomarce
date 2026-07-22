@@ -54,9 +54,9 @@ export default function BlogPostPage({ params }: { params: Promise<Params> }) {
   const article = POST_CONTENT[slug] || POST_CONTENT["cmyk-vs-rgb-farbraeume"];
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-6 text-[#191c1d]">
-      
-      {/* Back Button */}
+    <div className="flex flex-col gap-6 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-4">
+        {/* Back Button */}
       <Link href="/blog" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-bold w-fit mb-4">
         <ArrowLeft className="w-4 h-4" /> Zurück zum Magazin
       </Link>
@@ -92,6 +92,7 @@ export default function BlogPostPage({ params }: { params: Promise<Params> }) {
           <p key={index}>{paragraph}</p>
         ))}
       </article>
+    </div>
     </div>
   );
 }

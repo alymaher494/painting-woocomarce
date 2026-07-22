@@ -4,9 +4,9 @@ import { ArrowLeft, CheckCircle2, ShieldAlert, Sparkles, Printer } from "lucide-
 
 export default function PrintGuidePage() {
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 flex flex-col gap-10 text-[#191c1d]">
-      
-      {/* Back Button */}
+    <div className="flex flex-col gap-10 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col gap-4">
+        {/* Back Button */}
       <Link href="/" className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-primary transition-colors font-bold w-fit mb-2">
         <ArrowLeft className="w-4 h-4" /> Zurück zur Startseite
       </Link>
@@ -14,7 +14,7 @@ export default function PrintGuidePage() {
       {/* Header */}
       <div className="flex flex-col gap-3">
         <span className="text-secondary text-xs font-bold uppercase tracking-widest">Druckdaten-Vorbereitung</span>
-        <h1 className="text-4xl font-black text-foreground tracking-tight">Druckdaten richtig anlegen</h1>
+        <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Druckdaten richtig anlegen</h1>
         <p className="text-sm text-slate-500 max-w-xl font-medium leading-relaxed">
           Damit Ihr Druckergebnis gestochen scharf und farbecht wird, beachten Sie bitte unsere Richtlinien für Druckdaten.
         </p>
@@ -94,6 +94,7 @@ export default function PrintGuidePage() {
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 }

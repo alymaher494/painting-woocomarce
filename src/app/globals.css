@@ -4,11 +4,12 @@
 :root {
   --background: #f8f9fa;
   --foreground: #191c1d;
-  --primary: #3d6a00;
-  --primary-light: #76bc21;
+  --primary: #76bc21 ;
+  --primary-light:#3d6a00 ;
   --on-primary: #ffffff;
-  --secondary: #b40065;
-  --secondary-light: #db1f7f;
+  --secondary: #d60d7e ;
+  --secondary-dark: #a10a5f;
+  --secondary-light: #ef4ba7;
   --on-secondary: #ffffff;
   --tertiary: #151b29;
   --on-tertiary: #ffffff;

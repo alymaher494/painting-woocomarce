@@ -67,8 +67,9 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-12 text-[#191c1d] flex flex-col items-center justify-center">
-      <div className="max-w-[450px] w-full flex flex-col gap-6">
+    <div className="flex flex-col gap-6 text-[#191c1d] bg-[#f8f9fa]">
+      <div className="max-w-[1400px] mx-auto w-full px-4 md:px-8 pt-8 flex flex-col items-center justify-center gap-4">
+        <div className="max-w-[450px] w-full flex flex-col gap-6">
         <div className="text-center flex flex-col gap-2">
         <h1 className="text-2xl font-black text-foreground">Kundenkonto anlegen</h1>
         <p className="text-xs text-slate-500 font-semibold">Erstellen Sie ein kostenloses Kundenkonto für B2B-Konditionen und Datenchecks.</p>
@@ -155,6 +156,7 @@ export default function RegisterPage() {
       <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
         <ShieldCheck className="w-4 h-4 text-primary" />
         <span>Gesicherte SSL-Verbindung</span>
+      </div>
       </div>
     </div>
     </div>
