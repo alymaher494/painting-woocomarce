@@ -25,6 +25,8 @@ interface ProductInfo {
   hasGrommetsOption?: boolean;
   isRestrictedQuantities?: boolean;
   allowedQuantities?: number[];
+  hideStaffelpreise?: boolean; // Type 1 and Type 2 choice
+  minQuantity?: number;
 }
 
 const PRODUCT_DATA: Record<string, ProductInfo> = {
@@ -39,6 +41,8 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     baseSetupFee: 0,
     isPresetOnly: true,
     isFixedDesign: true, // No file upload required
+    hideStaffelpreise: true, // Hide large tables, allow low numbers (1, 2, 3...)
+    minQuantity: 1,
     presets: [
       { label: "Ø 10 cm", desc: "Kleine Ausführung", w: 10, h: 10, price: 5.00 },
       { label: "Ø 20 cm", desc: "Mittlere Ausführung", w: 20, h: 20, price: 10.00 },
@@ -63,6 +67,8 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     maxWidth: 150,
     maxHeight: 400,
     minNetPrice: 15.00, // Forces min cost of 15€ Netto
+    hideStaffelpreise: true, // Hides huge bulk table, allows 1, 2, 3...
+    minQuantity: 1,
     materials: [
       { name: "PVC Premium Vinyl Weißmatt", desc: "Very durable outdoor quality", extraFactor: 1.0 },
       { name: "PVC Premium Vinyl Hochglanz", desc: "Glossy finish for extra colors", extraFactor: 1.15 }
@@ -78,6 +84,11 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     baseCm2Price: 0.0025,
     baseSetupFee: 8.00,
     hasGrommetsOption: true, // Allows border grommets
+    presets: [
+      { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
+      { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
+      { label: "50 x 50 cm", desc: "Groß", w: 50, h: 50, price: 29.90 },
+    ],
     materials: [
       { name: "Affichenpapier 115g (Blueback)", desc: "Perfect for outdoor bill posting", extraFactor: 1.0 },
       { name: "Premium Fotopapier 250g", desc: "Heavy stock with semigloss finish", extraFactor: 1.45 }
@@ -161,15 +172,21 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   const product = PRODUCT_DATA[slug] || PRODUCT_DATA["fertige-aufkleber"];
 
   const presets = product.presets || [
-    { label: "5 x 5 cm", desc: "Small", w: 5, h: 5, price: 2.90 },
-    { label: "8 x 8 cm", desc: "Standard", w: 8, h: 8, price: 5.90 },
-    { label: "10 x 10 cm", desc: "Large", w: 10, h: 10, price: 8.90 },
+    { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
+    { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
+    { label: "50 x 50 cm", desc: "Groß", w: 50, h: 50, price: 29.90 },
   ];
 
   // Configurator States
   const [width, setWidth] = useState<number>(presets[0].w);
   const [height, setHeight] = useState<number>(presets[0].h);
-  const [quantity, setQuantity] = useState<number>(100);
+  const [quantity, setQuantity] = useState<number>(
+    product.isRestrictedQuantities && product.allowedQuantities
+      ? product.allowedQuantities[0]
+      : product.hideStaffelpreise
+        ? (product.minQuantity || 1)
+        : 100
+  );
   const [selectedMaterial, setSelectedMaterial] = useState<string>(product.materials[0].name);
   const [qualityCheck, setQualityCheck] = useState<boolean>(true);
   const [postInvoice, setPostInvoice] = useState<boolean>(false);
@@ -192,9 +209,9 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   useEffect(() => {
     if (product) {
       const pPresets = product.presets || [
-        { label: "5 x 5 cm", desc: "Small", w: 5, h: 5, price: 2.90 },
-        { label: "8 x 8 cm", desc: "Standard", w: 8, h: 8, price: 5.90 },
-        { label: "10 x 10 cm", desc: "Large", w: 10, h: 10, price: 8.90 },
+        { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
+        { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
+        { label: "50 x 50 cm", desc: "Groß", w: 50, h: 50, price: 29.90 },
       ];
       setWidth(pPresets[0].w);
       setHeight(pPresets[0].h);
@@ -203,6 +220,8 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
       setFile(null);
       if (product.isRestrictedQuantities && product.allowedQuantities) {
         setQuantity(product.allowedQuantities[0]);
+      } else if (product.hideStaffelpreise) {
+        setQuantity(product.minQuantity || 1);
       } else {
         setQuantity(100);
       }
@@ -543,61 +562,80 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
           {/* 3. Quantity & Pricing Table */}
           <div className="flex flex-col gap-4">
             <h3 className="text-foreground font-bold text-sm">3. Bestellmenge & Staffelpreise</h3>
-            <div className="border border-[#e7e8e9] rounded-xl overflow-hidden text-xs">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-[#f8f9fa] border-b border-[#e7e8e9] font-bold text-slate-500">
-                    <th className="p-3">Stückzahl</th>
-                    <th className="p-3">Stückpreis (Brutto)</th>
-                    <th className="p-3 text-right">Gesamtpreis</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#e7e8e9]">
-                  {(product.isRestrictedQuantities && product.allowedQuantities
-                    ? product.allowedQuantities
-                    : [50, 100, 250, 500]
-                  ).map((tierQty) => {
-                    const prices = getTierPrice(tierQty);
-                    return (
-                      <tr
-                        key={tierQty}
-                        onClick={() => setQuantity(tierQty)}
-                        className={`hover:bg-primary/5 cursor-pointer transition-colors ${
-                          quantity === tierQty ? "bg-primary/5 font-bold" : ""
-                        }`}
-                      >
-                        <td className="p-3 flex items-center gap-2">
-                          <input
-                            type="radio"
-                            name="qty-tier"
-                            checked={quantity === tierQty}
-                            onChange={() => setQuantity(tierQty)}
-                            className="accent-primary"
-                          />
-                          <span>{tierQty} Stück</span>
-                        </td>
-                        <td className="p-3">{prices.unit} €</td>
-                        <td className="p-3 text-right text-primary">{prices.total} €</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Custom Quantity Input (hidden for restricted quantities like Type 4) */}
-            {!product.isRestrictedQuantities && (
-              <div className="flex items-center gap-3 mt-2">
-                <span className="text-xs text-slate-500 font-bold">Individuelle Menge:</span>
+            
+            {product.hideStaffelpreise ? (
+              /* Simple direct input for small individual quantities (Type 1 and Type 2) */
+              <div className="flex items-center gap-3 mt-1">
+                <span className="text-xs text-slate-500 font-bold">Menge (Stück):</span>
                 <input
                   type="number"
-                  min={10}
+                  min={product.minQuantity || 1}
                   value={quantity}
-                  onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
+                  onChange={(e) => setQuantity(Math.max(product.minQuantity || 1, parseInt(e.target.value) || 1))}
                   className="precision-input w-24 text-center py-1.5"
                 />
-                <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. 10)</span>
+                <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. {product.minQuantity || 1})</span>
               </div>
+            ) : (
+              /* Standard Bulk Tiers table (Type 3 and Type 4) */
+              <>
+                <div className="border border-[#e7e8e9] rounded-xl overflow-hidden text-xs">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-[#f8f9fa] border-b border-[#e7e8e9] font-bold text-slate-500">
+                        <th className="p-3">Stückzahl</th>
+                        <th className="p-3">Stückpreis (Brutto)</th>
+                        <th className="p-3 text-right">Gesamtpreis</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#e7e8e9]">
+                      {(product.isRestrictedQuantities && product.allowedQuantities
+                        ? product.allowedQuantities
+                        : [50, 100, 250, 500]
+                      ).map((tierQty) => {
+                        const prices = getTierPrice(tierQty);
+                        return (
+                          <tr
+                            key={tierQty}
+                            onClick={() => setQuantity(tierQty)}
+                            className={`hover:bg-primary/5 cursor-pointer transition-colors ${
+                              quantity === tierQty ? "bg-primary/5 font-bold" : ""
+                            }`}
+                          >
+                            <td className="p-3 flex items-center gap-2">
+                              <input
+                                type="radio"
+                                name="qty-tier"
+                                checked={quantity === tierQty}
+                                onChange={() => setQuantity(tierQty)}
+                                className="accent-primary"
+                              />
+                              <span>{tierQty} Stück</span>
+                            </td>
+                            <td className="p-3">{prices.unit} €</td>
+                            <td className="p-3 text-right text-primary">{prices.total} €</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Custom Quantity Input (hidden for restricted quantities like Type 4) */}
+                {!product.isRestrictedQuantities && (
+                  <div className="flex items-center gap-3 mt-2">
+                    <span className="text-xs text-slate-500 font-bold">Individuelle Menge:</span>
+                    <input
+                      type="number"
+                      min={10}
+                      value={quantity}
+                      onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
+                      className="precision-input w-24 text-center py-1.5"
+                    />
+                    <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. 10)</span>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
