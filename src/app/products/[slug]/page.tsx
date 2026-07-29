@@ -84,6 +84,7 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     baseCm2Price: 0.0025,
     baseSetupFee: 8.00,
     hasGrommetsOption: true, // Allows border grommets
+    isPresetOnly: true, // Hides manual size input drawer
     presets: [
       { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
       { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
