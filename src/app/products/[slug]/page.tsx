@@ -525,189 +525,193 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
             )}
           </div>
 
-          {/* 2. Select Material */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-foreground font-bold text-sm">2. Material & Ausführung</h3>
-            <div className="flex flex-col gap-3">
-              {product.materials.map((m) => (
-                <label
-                  key={m.name}
-                  onClick={() => setSelectedMaterial(m.name)}
-                  className={`p-4 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
-                    selectedMaterial === m.name
-                      ? "bg-primary/5 border-primary"
-                      : "border-[#e7e8e9] hover:border-primary bg-white"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="radio"
-                      name="material"
-                      checked={selectedMaterial === m.name}
-                      onChange={() => setSelectedMaterial(m.name)}
-                      className="accent-primary"
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-foreground">{m.name}</span>
-                      <span className="text-[10px] text-slate-400 font-semibold">{m.desc}</span>
-                    </div>
-                  </div>
-                  {m.extraFactor > 1.0 && (
-                    <span className="text-[10px] bg-secondary/10 text-secondary font-bold px-2 py-0.5 rounded-full">
-                      +{Math.round((m.extraFactor - 1) * 100)}%
-                    </span>
-                  )}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* 3. Quantity & Pricing Table */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-foreground font-bold text-sm">3. Bestellmenge & Staffelpreise</h3>
-            
-            {product.hideStaffelpreise ? (
-              /* Simple direct input for small individual quantities (Type 1 and Type 2) */
-              <div className="flex items-center gap-3 mt-1">
-                <span className="text-xs text-slate-500 font-bold">Menge (Stück):</span>
-                <input
-                  type="number"
-                  min={product.minQuantity || 1}
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.max(product.minQuantity || 1, parseInt(e.target.value) || 1))}
-                  className="precision-input w-24 text-center py-1.5"
-                />
-                <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. {product.minQuantity || 1})</span>
-              </div>
-            ) : (
-              /* Standard Bulk Tiers table (Type 3 and Type 4) */
-              <>
-                <div className="border border-[#e7e8e9] rounded-xl overflow-hidden text-xs">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-[#f8f9fa] border-b border-[#e7e8e9] font-bold text-slate-500">
-                        <th className="p-3">Stückzahl</th>
-                        <th className="p-3">Stückpreis (Brutto)</th>
-                        <th className="p-3 text-right">Gesamtpreis</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#e7e8e9]">
-                      {(product.isRestrictedQuantities && product.allowedQuantities
-                        ? product.allowedQuantities
-                        : [50, 100, 250, 500]
-                      ).map((tierQty) => {
-                        const prices = getTierPrice(tierQty);
-                        return (
-                          <tr
-                            key={tierQty}
-                            onClick={() => setQuantity(tierQty)}
-                            className={`hover:bg-primary/5 cursor-pointer transition-colors ${
-                              quantity === tierQty ? "bg-primary/5 font-bold" : ""
-                            }`}
-                          >
-                            <td className="p-3 flex items-center gap-2">
-                              <input
-                                type="radio"
-                                name="qty-tier"
-                                checked={quantity === tierQty}
-                                onChange={() => setQuantity(tierQty)}
-                                className="accent-primary"
-                              />
-                              <span>{tierQty} Stück</span>
-                            </td>
-                            <td className="p-3">{prices.unit} €</td>
-                            <td className="p-3 text-right text-primary">{prices.total} €</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+          {!product.isFixedDesign && (
+            <>
+              {/* 2. Select Material */}
+              <div className="flex flex-col gap-4">
+                <h3 className="text-foreground font-bold text-sm">2. Material & Ausführung</h3>
+                <div className="flex flex-col gap-3">
+                  {product.materials.map((m) => (
+                    <label
+                      key={m.name}
+                      onClick={() => setSelectedMaterial(m.name)}
+                      className={`p-4 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                        selectedMaterial === m.name
+                          ? "bg-primary/5 border-primary"
+                          : "border-[#e7e8e9] hover:border-primary bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="radio"
+                          name="material"
+                          checked={selectedMaterial === m.name}
+                          onChange={() => setSelectedMaterial(m.name)}
+                          className="accent-primary"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-foreground">{m.name}</span>
+                          <span className="text-[10px] text-slate-400 font-semibold">{m.desc}</span>
+                        </div>
+                      </div>
+                      {m.extraFactor > 1.0 && (
+                        <span className="text-[10px] bg-secondary/10 text-secondary font-bold px-2 py-0.5 rounded-full">
+                          +{Math.round((m.extraFactor - 1) * 100)}%
+                        </span>
+                      )}
+                    </label>
+                  ))}
                 </div>
+              </div>
 
-                {/* Custom Quantity Input (hidden for restricted quantities like Type 4) */}
-                {!product.isRestrictedQuantities && (
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="text-xs text-slate-500 font-bold">Individuelle Menge:</span>
+              {/* 3. Quantity & Pricing Table */}
+              <div className="flex flex-col gap-4">
+                <h3 className="text-foreground font-bold text-sm">3. Bestellmenge & Staffelpreise</h3>
+                
+                {product.hideStaffelpreise ? (
+                  /* Simple direct input for small individual quantities (Type 1 and Type 2) */
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-xs text-slate-500 font-bold">Menge (Stück):</span>
                     <input
                       type="number"
-                      min={10}
+                      min={product.minQuantity || 1}
                       value={quantity}
-                      onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
+                      onChange={(e) => setQuantity(Math.max(product.minQuantity || 1, parseInt(e.target.value) || 1))}
                       className="precision-input w-24 text-center py-1.5"
                     />
-                    <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. 10)</span>
+                    <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. {product.minQuantity || 1})</span>
                   </div>
-                )}
-              </>
-            )}
-          </div>
-
-          <hr className="border-[#e7e8e9]" />
-
-          {/* Extra Services & Delivery */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="flex flex-col gap-4">
-              <h3 className="text-foreground font-bold text-sm">4. Zusatzleistungen</h3>
-              <div className="flex flex-col gap-3">
-                <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={qualityCheck}
-                    onChange={(e) => setQualityCheck(e.target.checked)}
-                    className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
-                  />
-                  <span className="text-xs font-semibold">Profi-Druckdatenprüfung (+2,50 €)</span>
-                </label>
-                <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={postInvoice}
-                    onChange={(e) => setPostInvoice(e.target.checked)}
-                    className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
-                  />
-                  <span className="text-xs font-semibold">Rechnung per Post erhalten (+1,50 €)</span>
-                </label>
-                {product.hasGrommetsOption && (
-                  <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={hasGrommets}
-                      onChange={(e) => setHasGrommets(e.target.checked)}
-                      className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
-                    />
-                    <span className="text-xs font-semibold">Umlaufende Metallösen zur Befestigung (+5,00 €)</span>
-                  </label>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <h3 className="text-foreground font-bold text-sm">5. Versandoptionen</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { id: "standard", label: "Standard", desc: "4-5 Tage", price: "0,00 €" },
-                  { id: "priority", label: "Express", desc: "2-3 Tage", price: "+15,00 €" },
-                ].map((tier) => (
-                  <button
-                    key={tier.id}
-                    type="button"
-                    onClick={() => setDelivery(tier.id as any)}
-                    className={`p-3 rounded-xl border text-left flex flex-col justify-between min-h-[75px] cursor-pointer transition-all ${
-                      delivery === tier.id
-                        ? "bg-primary/5 border-primary"
-                        : "border-[#e7e8e9] hover:border-primary"
-                    }`}
-                  >
-                     <span className="text-[10px] font-bold text-foreground block">{tier.label}</span>
-                     <div>
-                       <span className="text-[10px] text-slate-400 block font-semibold">{tier.desc}</span>
-                       <span className="text-[10px] font-bold text-primary">{tier.price}</span>
+                ) : (
+                  /* Standard Bulk Tiers table (Type 3 and Type 4) */
+                  <>
+                    <div className="border border-[#e7e8e9] rounded-xl overflow-hidden text-xs">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-[#f8f9fa] border-b border-[#e7e8e9] font-bold text-slate-500">
+                            <th className="p-3">Stückzahl</th>
+                            <th className="p-3">Stückpreis (Brutto)</th>
+                            <th className="p-3 text-right">Gesamtpreis</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#e7e8e9]">
+                          {(product.isRestrictedQuantities && product.allowedQuantities
+                            ? product.allowedQuantities
+                            : [50, 100, 250, 500]
+                          ).map((tierQty) => {
+                            const prices = getTierPrice(tierQty);
+                            return (
+                              <tr
+                                key={tierQty}
+                                onClick={() => setQuantity(tierQty)}
+                                className={`hover:bg-primary/5 cursor-pointer transition-colors ${
+                                  quantity === tierQty ? "bg-primary/5 font-bold" : ""
+                                }`}
+                              >
+                                <td className="p-3 flex items-center gap-2">
+                                  <input
+                                    type="radio"
+                                    name="qty-tier"
+                                    checked={quantity === tierQty}
+                                    onChange={() => setQuantity(tierQty)}
+                                    className="accent-primary"
+                                  />
+                                  <span>{tierQty} Stück</span>
+                                </td>
+                                <td className="p-3">{prices.unit} €</td>
+                                <td className="p-3 text-right text-primary">{prices.total} €</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
-                  </button>
-                ))}
+
+                    {/* Custom Quantity Input (hidden for restricted quantities like Type 4) */}
+                    {!product.isRestrictedQuantities && (
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-xs text-slate-500 font-bold">Individuelle Menge:</span>
+                        <input
+                          type="number"
+                          min={10}
+                          value={quantity}
+                          onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
+                          className="precision-input w-24 text-center py-1.5"
+                        />
+                        <span className="text-[10px] text-slate-400 font-semibold">Stück (Min. 10)</span>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
-            </div>
-          </div>
+
+              <hr className="border-[#e7e8e9]" />
+
+              {/* Extra Services & Delivery */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="flex flex-col gap-4">
+                  <h3 className="text-foreground font-bold text-sm">4. Zusatzleistungen</h3>
+                  <div className="flex flex-col gap-3">
+                    <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={qualityCheck}
+                        onChange={(e) => setQualityCheck(e.target.checked)}
+                        className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
+                      />
+                      <span className="text-xs font-semibold">Profi-Druckdatenprüfung (+2,50 €)</span>
+                    </label>
+                    <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={postInvoice}
+                        onChange={(e) => setPostInvoice(e.target.checked)}
+                        className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
+                      />
+                      <span className="text-xs font-semibold">Rechnung per Post erhalten (+1,50 €)</span>
+                    </label>
+                    {product.hasGrommetsOption && (
+                      <label className="flex items-center gap-3 text-slate-600 hover:text-foreground cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={hasGrommets}
+                          onChange={(e) => setHasGrommets(e.target.checked)}
+                          className="w-4 h-4 rounded border-[#e7e8e9] accent-primary"
+                        />
+                        <span className="text-xs font-semibold">Umlaufende Metallösen zur Befestigung (+5,00 €)</span>
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <h3 className="text-foreground font-bold text-sm">5. Versandoptionen</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: "standard", label: "Standard", desc: "4-5 Tage", price: "0,00 €" },
+                      { id: "priority", label: "Express", desc: "2-3 Tage", price: "+15,00 €" },
+                    ].map((tier) => (
+                      <button
+                        key={tier.id}
+                        type="button"
+                        onClick={() => setDelivery(tier.id as any)}
+                        className={`p-3 rounded-xl border text-left flex flex-col justify-between min-h-[75px] cursor-pointer transition-all ${
+                          delivery === tier.id
+                            ? "bg-primary/5 border-primary"
+                            : "border-[#e7e8e9] hover:border-primary"
+                        }`}
+                      >
+                         <span className="text-[10px] font-bold text-foreground block">{tier.label}</span>
+                         <div>
+                           <span className="text-[10px] text-slate-400 block font-semibold">{tier.desc}</span>
+                           <span className="text-[10px] font-bold text-primary">{tier.price}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           {!product.isFixedDesign && (
             <>
@@ -792,14 +796,28 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
               </span>
             </div>
 
-            <button
-              onClick={handleAddToCart}
-              type="button"
-              className="w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#b40065] hover:bg-[#db1f7f] text-white font-extrabold text-sm hover:shadow-lg transition-all transform active:scale-95 cursor-pointer"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              In den Warenkorb
-            </button>
+            <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+              {product.isFixedDesign && (
+                <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-full border border-[#e7e8e9] w-full md:w-auto justify-center">
+                  <span className="text-xs text-slate-500 font-bold whitespace-nowrap">Menge:</span>
+                  <input
+                    type="number"
+                    min={1}
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="w-12 text-center text-xs font-bold focus:outline-none"
+                  />
+                </div>
+              )}
+              <button
+                onClick={handleAddToCart}
+                type="button"
+                className="w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#b40065] hover:bg-[#db1f7f] text-white font-extrabold text-sm hover:shadow-lg transition-all transform active:scale-95 cursor-pointer"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                In den Warenkorb
+              </button>
+            </div>
           </div>
         </div>
       </div>
