@@ -83,6 +83,7 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     isPresetOnly: true, // Hides manual size input drawer
     hideStaffelpreise: true, // Hides bulk quantity table, allows 1, 2, 3...
     minQuantity: 1,
+    isFixedDesign: true, // No file upload required
     presets: [
       { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
       { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
