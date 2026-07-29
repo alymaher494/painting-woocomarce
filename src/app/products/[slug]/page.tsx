@@ -462,26 +462,28 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
           {/* 1. Choose Size Preset / Custom */}
           <div className="flex flex-col gap-4">
             <h3 className="text-foreground font-bold text-sm">1. Maße wählen</h3>
-            <div className="grid grid-cols-3 gap-4">
-              {presets.map((preset, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => {
-                    setWidth(preset.w);
-                    setHeight(preset.h);
-                  }}
-                  className={`p-4 rounded-xl text-center border transition-all cursor-pointer ${
-                    width === preset.w && height === preset.h
-                      ? "bg-primary/5 border-primary shadow-sm"
-                      : "border-[#e7e8e9] hover:border-primary"
-                  }`}
-                >
-                  <span className="text-xs font-extrabold text-foreground block">{preset.label}</span>
-                  <span className="text-[10px] text-slate-400 block mt-1 font-semibold">{preset.desc}</span>
-                </button>
-              ))}
-            </div>
+            {product.presets && (
+              <div className="grid grid-cols-3 gap-4">
+                {product.presets.map((preset, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => {
+                      setWidth(preset.w);
+                      setHeight(preset.h);
+                    }}
+                    className={`p-4 rounded-xl text-center border transition-all cursor-pointer ${
+                      width === preset.w && height === preset.h
+                        ? "bg-primary/5 border-primary shadow-sm"
+                        : "border-[#e7e8e9] hover:border-primary"
+                    }`}
+                  >
+                    <span className="text-xs font-extrabold text-foreground block">{preset.label}</span>
+                    <span className="text-[10px] text-slate-400 block mt-1 font-semibold">{preset.desc}</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Custom dimensions drawer (only show for standard custom print calculators) */}
             {!product.isPresetOnly && (
