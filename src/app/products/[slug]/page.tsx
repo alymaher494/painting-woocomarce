@@ -41,8 +41,6 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     baseSetupFee: 0,
     isPresetOnly: true,
     isFixedDesign: true, // No file upload required
-    hideStaffelpreise: true, // Hide large tables, allow low numbers (1, 2, 3...)
-    minQuantity: 1,
     presets: [
       { label: "Ø 10 cm", desc: "Kleine Ausführung", w: 10, h: 10, price: 5.00 },
       { label: "Ø 20 cm", desc: "Mittlere Ausführung", w: 20, h: 20, price: 10.00 },
@@ -67,8 +65,6 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     maxWidth: 150,
     maxHeight: 400,
     minNetPrice: 15.00, // Forces min cost of 15€ Netto
-    hideStaffelpreise: true, // Hides huge bulk table, allows 1, 2, 3...
-    minQuantity: 1,
     materials: [
       { name: "PVC Premium Vinyl Weißmatt", desc: "Very durable outdoor quality", extraFactor: 1.0 },
       { name: "PVC Premium Vinyl Hochglanz", desc: "Glossy finish for extra colors", extraFactor: 1.15 }
@@ -85,6 +81,8 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     baseSetupFee: 8.00,
     hasGrommetsOption: true, // Allows border grommets
     isPresetOnly: true, // Hides manual size input drawer
+    hideStaffelpreise: true, // Hides bulk quantity table, allows 1, 2, 3...
+    minQuantity: 1,
     presets: [
       { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
       { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
