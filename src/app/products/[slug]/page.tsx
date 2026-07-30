@@ -58,13 +58,15 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     thumbnails: [
       "https://images.unsplash.com/photo-1561070791-26c113006238?w=150&auto=format&fit=crop&q=80"
     ],
-    baseCm2Price: 0.0032, // Matches 100x100cm (10,000cm2) * 0.0032 = 32.00 € Netto
+    baseCm2Price: 0.0035, // Matches 100x100cm (10,000cm2) * 0.0035 = 35.00 € Netto
     baseSetupFee: 4.50,
     minWidth: 10,
     minHeight: 10,
     maxWidth: 150,
     maxHeight: 400,
     minNetPrice: 15.00, // Forces min cost of 15€ Netto
+    hideStaffelpreise: true, // Hides bulk quantity table, allows 1, 2, 3...
+    minQuantity: 1,
     materials: [
       { name: "PVC Premium Vinyl Weißmatt", desc: "Very durable outdoor quality", extraFactor: 1.0 },
       { name: "PVC Premium Vinyl Hochglanz", desc: "Glossy finish for extra colors", extraFactor: 1.15 }
@@ -171,15 +173,9 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
 
   const product = PRODUCT_DATA[slug] || PRODUCT_DATA["fertige-aufkleber"];
 
-  const presets = product.presets || [
-    { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
-    { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
-    { label: "50 x 50 cm", desc: "Groß", w: 50, h: 50, price: 29.90 },
-  ];
-
   // Configurator States
-  const [width, setWidth] = useState<number>(presets[0].w);
-  const [height, setHeight] = useState<number>(presets[0].h);
+  const [width, setWidth] = useState<number>(product.presets ? product.presets[0].w : (product.minWidth || 10));
+  const [height, setHeight] = useState<number>(product.presets ? product.presets[0].h : (product.minHeight || 10));
   const [quantity, setQuantity] = useState<number>(
     product.isRestrictedQuantities && product.allowedQuantities
       ? product.allowedQuantities[0]
@@ -208,13 +204,13 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   // Update states on slug navigation
   useEffect(() => {
     if (product) {
-      const pPresets = product.presets || [
-        { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
-        { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
-        { label: "50 x 50 cm", desc: "Groß", w: 50, h: 50, price: 29.90 },
-      ];
-      setWidth(pPresets[0].w);
-      setHeight(pPresets[0].h);
+      if (product.presets) {
+        setWidth(product.presets[0].w);
+        setHeight(product.presets[0].h);
+      } else {
+        setWidth(product.minWidth || 10);
+        setHeight(product.minHeight || 10);
+      }
       setSelectedMaterial(product.materials[0].name);
       setHasGrommets(false);
       setFile(null);
