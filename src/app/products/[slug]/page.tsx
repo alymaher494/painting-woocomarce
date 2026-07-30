@@ -59,7 +59,7 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
       "https://images.unsplash.com/photo-1561070791-26c113006238?w=150&auto=format&fit=crop&q=80"
     ],
     baseCm2Price: 0.0035, // Matches 100x100cm (10,000cm2) * 0.0035 = 35.00 € Netto
-    baseSetupFee: 4.50,
+    baseSetupFee: 0.00, // Removed setup fee to make 100x100 Netto exactly 35.00 €
     minWidth: 10,
     minHeight: 10,
     maxWidth: 150,
