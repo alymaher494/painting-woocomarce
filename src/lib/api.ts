@@ -126,3 +126,32 @@ export async function getWooProductsByCategory(categorySlug: string) {
   `, { variables: { category: categorySlug } });
   return data?.products?.nodes || null;
 }
+
+// 6. Fetch single WooCommerce Product by slug with metadata
+export async function getWooProductBySlug(slug: string) {
+  const data = await fetchAPI(`
+    query GetProductBySlug($slug: ID!) {
+      product(id: $slug, idType: SLUG) {
+        id
+        databaseId
+        name
+        slug
+        description
+        image {
+          sourceUrl
+        }
+        productCategories {
+          nodes {
+            name
+            slug
+          }
+        }
+        metaData {
+          key
+          value
+        }
+      }
+    }
+  `, { variables: { slug } });
+  return data?.product || null;
+}

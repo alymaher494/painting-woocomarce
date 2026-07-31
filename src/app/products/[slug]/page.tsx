@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Check, Upload, HelpCircle, FileText, ShoppingCart, ShieldAlert } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { getWooProductBySlug } from "@/lib/api";
 
 interface ProductInfo {
   name: string;
@@ -184,18 +185,16 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   const router = useRouter();
   const { addToCart } = useCart();
 
-  const product = PRODUCT_DATA[slug] || PRODUCT_DATA["fertige-aufkleber"];
+  const [dynamicProduct, setDynamicProduct] = useState<Partial<ProductInfo> | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const fallbackProduct = PRODUCT_DATA[slug] || PRODUCT_DATA["fertige-aufkleber"];
+  const product: ProductInfo = dynamicProduct ? { ...fallbackProduct, ...dynamicProduct } as ProductInfo : fallbackProduct;
 
   // Configurator States
   const [width, setWidth] = useState<number>(product.presets ? product.presets[0].w : (product.minWidth || 10));
   const [height, setHeight] = useState<number>(product.presets ? product.presets[0].h : (product.minHeight || 10));
-  const [quantity, setQuantity] = useState<number>(
-    product.isRestrictedQuantities && product.allowedQuantities
-      ? product.allowedQuantities[0]
-      : product.hideStaffelpreise
-        ? (product.minQuantity || 1)
-        : 100
-  );
+  const [quantity, setQuantity] = useState<number>(100);
   const [selectedMaterial, setSelectedMaterial] = useState<string>(product.materials[0].name);
   const [qualityCheck, setQualityCheck] = useState<boolean>(true);
   const [postInvoice, setPostInvoice] = useState<boolean>(false);
@@ -214,20 +213,103 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   // Price Calculations
   const [pricing, setPricing] = useState({ net: 0, vat: 0, gross: 0 });
 
-  // Update states on slug navigation
+  // 1. Fetch Dynamic WordPress/WooCommerce product properties
+  useEffect(() => {
+    async function loadProduct() {
+      setIsLoading(true);
+      try {
+        const wpProduct = await getWooProductBySlug(slug);
+        if (wpProduct) {
+          const metaMap: Record<string, any> = {};
+          wpProduct.metaData?.forEach((meta: any) => {
+            metaMap[meta.key] = meta.value;
+          });
+
+          let parsedPresets: any[] | undefined = undefined;
+          if (metaMap.presets) {
+            try {
+              parsedPresets = typeof metaMap.presets === 'string' ? JSON.parse(metaMap.presets) : metaMap.presets;
+            } catch (e) {
+              console.warn("Failed to parse presets metadata:", e);
+            }
+          }
+
+          let parsedMaterials: any[] | undefined = undefined;
+          if (metaMap.materials) {
+            try {
+              parsedMaterials = typeof metaMap.materials === 'string' ? JSON.parse(metaMap.materials) : metaMap.materials;
+            } catch (e) {
+              console.warn("Failed to parse materials metadata:", e);
+            }
+          }
+
+          let parsedSpecs: string[] | undefined = undefined;
+          if (metaMap.specifications) {
+            if (typeof metaMap.specifications === 'string') {
+              parsedSpecs = metaMap.specifications.split('\n').map((s: string) => s.trim()).filter(Boolean);
+            } else if (Array.isArray(metaMap.specifications)) {
+              parsedSpecs = metaMap.specifications;
+            }
+          }
+
+          const mappedProduct: Partial<ProductInfo> = {
+            name: wpProduct.name || undefined,
+            category: wpProduct.productCategories?.nodes?.[0]?.name || undefined,
+            image: wpProduct.image?.sourceUrl || undefined,
+            baseCm2Price: metaMap.baseCm2Price ? parseFloat(metaMap.baseCm2Price) : undefined,
+            baseSetupFee: metaMap.baseSetupFee ? parseFloat(metaMap.baseSetupFee) : undefined,
+            isPresetOnly: metaMap.isPresetOnly === '1' || metaMap.isPresetOnly === true || metaMap.isPresetOnly === 'true' ? true : metaMap.isPresetOnly === '0' || metaMap.isPresetOnly === false || metaMap.isPresetOnly === 'false' ? false : undefined,
+            isFixedDesign: metaMap.isFixedDesign === '1' || metaMap.isFixedDesign === true || metaMap.isFixedDesign === 'true' ? true : metaMap.isFixedDesign === '0' || metaMap.isFixedDesign === false || metaMap.isFixedDesign === 'false' ? false : undefined,
+            minWidth: metaMap.minWidth ? parseInt(metaMap.minWidth) : undefined,
+            minHeight: metaMap.minHeight ? parseInt(metaMap.minHeight) : undefined,
+            maxWidth: metaMap.maxWidth ? parseInt(metaMap.maxWidth) : undefined,
+            maxHeight: metaMap.maxHeight ? parseInt(metaMap.maxHeight) : undefined,
+            minNetPrice: metaMap.minNetPrice ? parseFloat(metaMap.minNetPrice) : undefined,
+            hasGrommetsOption: metaMap.hasGrommetsOption === '1' || metaMap.hasGrommetsOption === true || metaMap.hasGrommetsOption === 'true' ? true : metaMap.hasGrommetsOption === '0' || metaMap.hasGrommetsOption === false || metaMap.hasGrommetsOption === 'false' ? false : undefined,
+            isRestrictedQuantities: metaMap.isRestrictedQuantities === '1' || metaMap.isRestrictedQuantities === true || metaMap.isRestrictedQuantities === 'true' ? true : metaMap.isRestrictedQuantities === '0' || metaMap.isRestrictedQuantities === false || metaMap.isRestrictedQuantities === 'false' ? false : undefined,
+            hideStaffelpreise: metaMap.hideStaffelpreise === '1' || metaMap.hideStaffelpreise === true || metaMap.hideStaffelpreise === 'true' ? true : metaMap.hideStaffelpreise === '0' || metaMap.hideStaffelpreise === false || metaMap.hideStaffelpreise === 'false' ? false : undefined,
+            minQuantity: metaMap.minQuantity ? parseInt(metaMap.minQuantity) : undefined,
+            allowedQuantities: metaMap.allowedQuantities ? String(metaMap.allowedQuantities).split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n)) : undefined,
+            presets: parsedPresets,
+            materials: parsedMaterials,
+            specifications: parsedSpecs
+          };
+
+          Object.keys(mappedProduct).forEach(key => {
+            if ((mappedProduct as any)[key] === undefined) {
+              delete (mappedProduct as any)[key];
+            }
+          });
+
+          setDynamicProduct(mappedProduct);
+        }
+      } catch (err) {
+        console.error("Error loading dynamic WordPress product details:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadProduct();
+  }, [slug]);
+
+  // 2. Synchronize calculator input states when product configurations change
   useEffect(() => {
     if (product) {
-      if (product.presets) {
+      if (product.presets && product.presets.length > 0) {
         setWidth(product.presets[0].w);
         setHeight(product.presets[0].h);
       } else {
         setWidth(product.minWidth || 10);
         setHeight(product.minHeight || 10);
       }
-      setSelectedMaterial(product.materials[0].name);
+      if (product.materials && product.materials.length > 0) {
+        setSelectedMaterial(product.materials[0].name);
+      }
       setHasGrommets(false);
       setFile(null);
-      if (product.isRestrictedQuantities && product.allowedQuantities) {
+      setActiveImage(product.image);
+
+      if (product.isRestrictedQuantities && product.allowedQuantities && product.allowedQuantities.length > 0) {
         setQuantity(product.allowedQuantities[0]);
       } else if (product.hideStaffelpreise) {
         setQuantity(product.minQuantity || 1);
@@ -235,14 +317,14 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
         setQuantity(100);
       }
     }
-  }, [slug]);
+  }, [slug, dynamicProduct]);
 
   useEffect(() => {
     let rawPrintCost = 0;
-    const materialFactor = product.materials.find((m) => m.name === selectedMaterial)?.extraFactor || 1.0;
+    const materialFactor = product.materials.find((m: any) => m.name === selectedMaterial)?.extraFactor || 1.0;
 
     if (product.isPresetOnly && product.presets) {
-      const activePreset = product.presets.find((p) => p.w === width && p.h === height) || product.presets[0];
+      const activePreset = product.presets.find((p: any) => p.w === width && p.h === height) || product.presets[0];
       rawPrintCost = activePreset.price * materialFactor;
     } else {
       const area = width * height;
@@ -368,10 +450,10 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
   // Estimated pricing table for mockup visualization
   const getTierPrice = (tierQty: number) => {
     let rawPrintCost = 0;
-    const materialFactor = product.materials.find((m) => m.name === selectedMaterial)?.extraFactor || 1.0;
+    const materialFactor = product.materials.find((m: any) => m.name === selectedMaterial)?.extraFactor || 1.0;
     
     if (product.isPresetOnly && product.presets) {
-      const activePreset = product.presets.find((p) => p.w === width && p.h === height) || product.presets[0];
+      const activePreset = product.presets.find((p: any) => p.w === width && p.h === height) || product.presets[0];
       rawPrintCost = activePreset.price * materialFactor;
     } else {
       const area = width * height;
