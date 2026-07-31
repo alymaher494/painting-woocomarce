@@ -27,6 +27,7 @@ interface ProductInfo {
   allowedQuantities?: number[];
   hideStaffelpreise?: boolean; // Type 1 and Type 2 choice
   minQuantity?: number;
+  specifications?: string[];
 }
 
 const PRODUCT_DATA: Record<string, ProductInfo> = {
@@ -41,6 +42,12 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     baseSetupFee: 0,
     isPresetOnly: true,
     isFixedDesign: true, // No file upload required
+    specifications: [
+      "Fertig gedruckte Aufkleber auf Premium-Haftpapier",
+      "Wetterfest & UV-geschützt (bei Outdoor-Vinyl)",
+      "Konturgenau vorgestanzt für einfaches Abziehen",
+      "Sofort einsatzbereit für Ihr Business"
+    ],
     presets: [
       { label: "Ø 10 cm", desc: "Kleine Ausführung", w: 10, h: 10, price: 5.00 },
       { label: "Ø 20 cm", desc: "Mittlere Ausführung", w: 20, h: 20, price: 10.00 },
@@ -86,6 +93,12 @@ const PRODUCT_DATA: Record<string, ProductInfo> = {
     hideStaffelpreise: true, // Hides bulk quantity table, allows 1, 2, 3...
     minQuantity: 1,
     isFixedDesign: true, // No file upload required
+    specifications: [
+      "Hochwertiger Qualitätsdruck auf robustem Papier",
+      "Brillante Farbwiedergabe & UV-Beständigkeit",
+      "Gebrauchsfertig geliefert – ideal für Innenräume",
+      "Vorgefertigte Abmessungen für schnelles Aufhängen"
+    ],
     presets: [
       { label: "25 x 25 cm", desc: "Kompakt", w: 25, h: 25, price: 12.90 },
       { label: "30 x 30 cm", desc: "Standard", w: 30, h: 30, price: 18.90 },
@@ -426,21 +439,36 @@ export default function ProductDetailPage({ params }: { params: Promise<Params> 
           </div>
 
           <div className="bg-white border border-[#e7e8e9] p-6 rounded-2xl flex flex-col gap-4 shadow-sm">
-            <h4 className="text-foreground font-black text-xs uppercase tracking-wider text-secondary">Druck-Checkliste</h4>
-            <ul className="text-xs text-slate-500 flex flex-col gap-2.5 font-medium">
-              <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-primary-light" /> 300 DPI optimale Auflösung
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-primary-light" /> CMYK Farbraum (Coated FOGRA39)
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-primary-light" /> 2mm umlaufender Beschnitt (Bleed)
-              </li>
-              <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-primary-light" /> Schriften in Pfade konvertiert
-              </li>
-            </ul>
+            {product.specifications ? (
+              <>
+                <h4 className="text-foreground font-black text-xs uppercase tracking-wider text-secondary">Produkt-Spezifikationen</h4>
+                <ul className="text-xs text-slate-500 flex flex-col gap-2.5 font-medium">
+                  {product.specifications.map((spec, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-primary-light flex-shrink-0" /> {spec}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <>
+                <h4 className="text-foreground font-black text-xs uppercase tracking-wider text-secondary">Druck-Checkliste</h4>
+                <ul className="text-xs text-slate-500 flex flex-col gap-2.5 font-medium">
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-primary-light" /> 300 DPI optimale Auflösung
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-primary-light" /> CMYK Farbraum (Coated FOGRA39)
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-primary-light" /> 2mm umlaufender Beschnitt (Bleed)
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-primary-light" /> Schriften in Pfade konvertiert
+                  </li>
+                </ul>
+              </>
+            )}
           </div>
         </div>
 
